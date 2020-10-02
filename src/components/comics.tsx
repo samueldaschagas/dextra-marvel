@@ -36,6 +36,7 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
   const [items, setItems] = useState<TComic[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [selectedPage, setSelectedPage] = useState(0);
+  const [searchText, setSearchText] = useState("");
   const [offSet, setOffSet] = useState(0);
   const itemType = path.replace('/', '');
   const isComics = itemType === 'comics';
@@ -43,6 +44,12 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
   useEffect(() => {
     setOffSet(0);
     setSelectedPage(0);
+    const inputSearchText = document.getElementById("searchText") as HTMLInputElement;
+
+    if (inputSearchText) {
+      inputSearchText.value = "";
+    }
+    setSearchText("");
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemType]);
@@ -73,14 +80,14 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
     }
   }
 
-  const [searchText, setSearchText] = useState("");
-
   useEffect(() => {
     fetchData(searchText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offSet]);
 
   function handlePageClick(data: { selected: number }) {
+    window.scrollTo(0, 0);
+    
     const selected = data.selected;
     const selectedOffSet = Math.ceil(selected * 20);
 
@@ -160,16 +167,15 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
                 <ReactPaginate
                   previousLabel="Previous"
                   nextLabel="Next"
-                  breakLabel={'...'}
-                  breakClassName={'break-me'}
+                  breakLabel="..."
+                  breakClassName="break-me"
                   pageCount={totalPages}
                   forcePage={selectedPage}
                   marginPagesDisplayed={2}
                   pageRangeDisplayed={5}
                   onPageChange={handlePageClick}
-                  containerClassName={'pagination'}
-                  // subContainerClassName={'pages pagination'}
-                  activeClassName={'active'}
+                  containerClassName="pagination"
+                  activeClassName="active"
                 />
               )}
           </GridSystemContainer>
