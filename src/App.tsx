@@ -1,25 +1,63 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { CSSProperties } from 'react';
+import { BrowserRouter as Router, NavLink, Redirect, Route, Switch } from "react-router-dom";
+import './App.scss';
+import ComicPage from './components/comic-page';
+import Comics from './components/comics';
 
 function App() {
+  const activeStyle: CSSProperties = {
+    color: "#ef4f21"
+  };
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <Redirect to="/comics" />
+
+        <header>
+          <nav className="header__nav">
+            <span className="header__nav__brand">
+              <NavLink activeStyle={activeStyle} to="/comics">
+                <img src="./images/logo.svg" alt="Logo Marvel" />
+              </NavLink>
+            </span>
+            <ul>
+              <li>
+                <NavLink activeStyle={activeStyle} to="/comics">Quadrinhos</NavLink>
+              </li>
+              <li>
+                <NavLink activeStyle={activeStyle} to="/characters">Personagens</NavLink>
+              </li>
+            </ul>
+            <span className="header__nav__dextra-link">
+              <a href="https://dextra.com.br" target="_blank" rel="noopener noreferrer">
+                <img src="./images/logo-dextra-branca.png" alt="Logo Dextra" />
+              </a>
+            </span>
+          </nav>
+        </header>
+
+        <Switch>
+          <Route exact path="/comics" component={Comics} />
+          <Route exact path="/comics/:comicId" component={ComicPage} />
+          <Route exact path="/characters">
+            <div className="header__img-wrapper">
+              <img 
+                src="./images/characters-banner.jpg" 
+                className="header__img-banner" 
+                alt="Banner Personagens" 
+              />
+            </div>
+          </Route>
+        </Switch>
+
+        <footer className="App__footer">
+          <a href="https://dextra.com.br" target="_blank" rel="noopener noreferrer">
+            <img src="./images/logo-dextra-preta.png" alt="Logo Dextra Rodapé" />
+          </a>
+        </footer>
+      </div>
+    </Router>
   );
 }
 
