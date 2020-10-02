@@ -48,15 +48,7 @@ function App() {
             path="/characters" 
             render={(props) => <Comics {...props} title="Characters" /> } 
           />
-          {/* <Route exact path="/characters">
-            <div className="header__img-wrapper">
-              <img 
-                src="./images/characters-banner.jpg" 
-                className="header__img-banner" 
-                alt="Banner Personagens" 
-              />
-            </div>
-          </Route> */}
+          <Route exact path="/characters/:comicId" component={ComicPage} />
         </Switch>
 
         <footer className="App__footer">

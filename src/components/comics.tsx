@@ -35,9 +35,17 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
   const [loadingItems, setLoadingItems] = useState(false);
   const [items, setItems] = useState<TComic[]>([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(0);
   const [offSet, setOffSet] = useState(0);
   const itemType = path.replace('/', '');
   const isComics = itemType === 'comics';
+
+  useEffect(() => {
+    setOffSet(0);
+    setSelectedPage(0);
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemType]);
 
   async function fetchData(searchText?: string) {
     setLoadingItems(true);
@@ -70,12 +78,13 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
   useEffect(() => {
     fetchData(searchText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offSet, itemType]);
+  }, [offSet]);
 
   function handlePageClick(data: { selected: number }) {
     const selected = data.selected;
     const selectedOffSet = Math.ceil(selected * 20);
 
+    setSelectedPage(selected);
     setOffSet(selectedOffSet);
   };
 
@@ -90,8 +99,8 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
     fetchData(searchText);
   }
 
-  function handleComicClick(comicId: number) {
-    history.push(`/comics/${comicId}`);
+  function handleItemClick(id: number) {
+    history.push(`/${itemType}/${id}`);
   }
 
   function renderItems() {
@@ -140,7 +149,7 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
                   <Col className="comics__col" sm={3} key={c.id}>
                     <Comic 
                       item={c} 
-                      onClick={handleComicClick} 
+                      onClick={handleItemClick} 
                       itemType={itemType}
                     />
                   </Col>
@@ -154,6 +163,7 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
                   breakLabel={'...'}
                   breakClassName={'break-me'}
                   pageCount={totalPages}
+                  forcePage={selectedPage}
                   marginPagesDisplayed={2}
                   pageRangeDisplayed={5}
                   onPageChange={handlePageClick}

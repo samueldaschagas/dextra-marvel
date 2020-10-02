@@ -25,7 +25,8 @@ type TComic = {
   format: string;
   isbn: string;
   issn: string;
-  title: string;
+  title?: string;
+  name?: string;
   thumbnail: TThumbnail;
   pageCount: number;
   prices: { price: number }[]
@@ -39,10 +40,14 @@ type TComicProps = RouteComponentProps<{comicId: string}> & {
 const PUBLIC_KEY = '4ee2cb620530c8a433645ce054a014cb';
 const PRIVATE_KEY = '3a391728aa873a351b28c250786cbb300cf6e303';
 
-export default function ComicPage({ match: { params: { comicId } } }: TComicProps) {
+export default function ComicPage({ match: { path = '', params: { comicId } } }: TComicProps) {
   const { addToast } = useToasts();
   const [loadingComic, setLoadingComic] = useState(false);
   const [comic, setComic] = useState<TComic>();
+  var re = new RegExp("/", 'g');
+  const replacedPath = path.replace(re,"").split(":");
+  const itemType = replacedPath[0];
+  const isComics = itemType === 'comics';
   
   useEffect(() => {
     async function fetchComic() {
@@ -51,9 +56,11 @@ export default function ComicPage({ match: { params: { comicId } } }: TComicProp
         const timestamp = Number(new Date());
         const hash = md5.create()
         hash.update(timestamp + PRIVATE_KEY + PUBLIC_KEY);
+        const comicsUrl = `comics/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
+        const charactersUrl = `characters/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
         
         const { data: { data: { results } }} = await api.get(
-            `comics/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`
+            isComics ? comicsUrl : charactersUrl
         ); 
         setComic(results[0]);
       } catch(error) {
@@ -85,9 +92,9 @@ export default function ComicPage({ match: { params: { comicId } } }: TComicProp
       )}
       <Container>
         <div style={{ textAlign: "left", padding: "0 25px" }}>
-          <Link to="/comics"><AiOutlineArrowLeft /> Back To Comics</Link>
+          <Link to={`/${itemType}`}><AiOutlineArrowLeft /> Back To {isComics ? "Comics" : "Characters"}</Link>
         </div>
-        <PageHeader title={comic?.title!}/>
+        <PageHeader title={(comic || {})[isComics ? 'title' : 'name']!}/>
         {!loadingComic && (
           <GridSystemContainer>
             <Row>
@@ -99,7 +106,7 @@ export default function ComicPage({ match: { params: { comicId } } }: TComicProp
                 />
               </Col>
               <Col sm={8}>
-              <ul className="comic-page__details">
+                <ul className="comic-page__details">
                   <li className="comic-page__details__description">{comic?.description}</li>
                   <li> 
                     <Row>
