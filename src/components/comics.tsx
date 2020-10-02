@@ -86,7 +86,7 @@ export default function Comics({ history }: TComicsProps) {
   }
 
   function handleComicClick(comicId: number) {
-    // history.push(`/comics/${comicId}`);
+    history.push(`/comics/${comicId}`);
   }
 
   function renderItems() {
@@ -97,7 +97,7 @@ export default function Comics({ history }: TComicsProps) {
                   <input 
                     id="searchTitle" 
                     onChange={handleSearchChange} 
-                    placeholder="Buscar por título..."
+                    placeholder="Search by title..."
                   />
                   {searchTitle ? <AiOutlineClose style={{
                     position: "relative",
@@ -126,7 +126,7 @@ export default function Comics({ history }: TComicsProps) {
                     type="submit" 
                     disabled={loadingComics || !searchTitle}
                   >
-                    Buscar
+                    Search
                   </button>
                 </form>
               </Row>
@@ -136,12 +136,12 @@ export default function Comics({ history }: TComicsProps) {
                     <Comic item={d} onClick={handleComicClick}/>
                   </Col>
                 ))}
-                {comics.length === 0 && !loadingComics && "Nenhum resultado encontrado"}
+                {comics.length === 0 && !loadingComics && "No results found"}
               </Row>
               {comics.length > 0 && (
                 <ReactPaginate
-                  previousLabel="Anterior"
-                  nextLabel="Próxima"
+                  previousLabel="Previous"
+                  nextLabel="Next"
                   breakLabel={'...'}
                   breakClassName={'break-me'}
                   pageCount={totalPages}
@@ -163,7 +163,7 @@ export default function Comics({ history }: TComicsProps) {
         <img 
           src="./images/comics-banner.jpg" 
           className="header__img-banner"
-          alt="Banner Quadrinhos"
+          alt="Comics Banner"
         />
       </div>
       {loadingComics && (
@@ -174,7 +174,7 @@ export default function Comics({ history }: TComicsProps) {
         />
       )}
       <Container>
-        <PageHeader title="Quadrinhos" />
+        <PageHeader title="Comics" />
         {renderItems()}
       </Container>
     </>

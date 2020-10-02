@@ -23,7 +23,7 @@ export default function Comic({ item, onClick }: TComicProps) {
     return (
         <>
             <div className="comic" onClick={() => onClick(item.id)}>
-              <img src={`${item.thumbnail.path}.${item.thumbnail.extension}`} alt={`${item.title}`} />
+              <img src={`${item.thumbnail.path}/portrait_incredible.${item.thumbnail.extension}`} alt={`${item.title}`} />
               <div className="comic__details">
                 <div className="comic__details__name">{item.title}</div>
                 <div className="comic__details__footer">

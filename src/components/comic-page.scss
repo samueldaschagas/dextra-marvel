@@ -1,0 +1,41 @@
+.comic-page__img {
+    width: 420px;
+    float: left;
+    margin-left: 10px;;
+}
+
+.comic-page__details {
+    text-align: left !important;
+
+    li {
+        margin: 10px 0;
+    }
+
+    em {
+        font-style: italic !important;
+    }
+
+    strong {
+        font-weight: 900;
+    }
+}
+
+.comic-page__details__description {
+    text-align: justify;
+}
+
+.comic-page__details__creator {
+    padding: 8px;
+}
+
+.comic-page__details__price {
+    font-size: 30px;
+    text-align: left;
+    font-weight: 900;
+}
+
+.comic-page__details__rule {
+    color: #777;
+    text-transform: uppercase;
+    font-size: 12px;
+}

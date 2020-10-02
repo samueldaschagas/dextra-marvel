@@ -12,8 +12,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Redirect to="/comics" />
-
         <header>
           <nav className="header__nav">
             <span className="header__nav__brand">
@@ -23,10 +21,10 @@ function App() {
             </span>
             <ul>
               <li>
-                <NavLink activeStyle={activeStyle} to="/comics">Quadrinhos</NavLink>
+                <NavLink activeStyle={activeStyle} to="/comics">Comics</NavLink>
               </li>
               <li>
-                <NavLink activeStyle={activeStyle} to="/characters">Personagens</NavLink>
+                <NavLink activeStyle={activeStyle} to="/characters">Characters</NavLink>
               </li>
             </ul>
             <span className="header__nav__dextra-link">
@@ -37,6 +35,7 @@ function App() {
           </nav>
         </header>
 
+        <Redirect exact from='/' to='/comics' />
         <Switch>
           <Route exact path="/comics" component={Comics} />
           <Route exact path="/comics/:comicId" component={ComicPage} />
