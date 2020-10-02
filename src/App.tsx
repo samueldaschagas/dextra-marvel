@@ -37,9 +37,18 @@ function App() {
 
         <Redirect exact from='/' to='/comics' />
         <Switch>
-          <Route exact path="/comics" component={Comics} />
+          <Route 
+            exact 
+            path="/comics" 
+            render={(props) => <Comics {...props} title="Comics" /> } 
+          />
           <Route exact path="/comics/:comicId" component={ComicPage} />
-          <Route exact path="/characters">
+          <Route 
+            exact 
+            path="/characters" 
+            render={(props) => <Comics {...props} title="Characters" /> } 
+          />
+          {/* <Route exact path="/characters">
             <div className="header__img-wrapper">
               <img 
                 src="./images/characters-banner.jpg" 
@@ -47,7 +56,7 @@ function App() {
                 alt="Banner Personagens" 
               />
             </div>
-          </Route>
+          </Route> */}
         </Switch>
 
         <footer className="App__footer">

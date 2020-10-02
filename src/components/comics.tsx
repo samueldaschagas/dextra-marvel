@@ -24,30 +24,35 @@ type TComic = {
 };
 
 type TComicsProps = RouteComponentProps & {
-    data: TComic[];
+    title: string;
 };
 
 const PUBLIC_KEY = '4ee2cb620530c8a433645ce054a014cb';
 const PRIVATE_KEY = '3a391728aa873a351b28c250786cbb300cf6e303';
 
-export default function Comics({ history }: TComicsProps) {
+export default function Comics({ history, title, match: { path } }: TComicsProps) {
   const { addToast } = useToasts();
-  const [loadingComics, setLoadingComics] = useState(false);
-  const [comics, setComics] = useState<TComic[]>([]);
+  const [loadingItems, setLoadingItems] = useState(false);
+  const [items, setItems] = useState<TComic[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [offSet, setOffSet] = useState(0);
+  const itemType = path.replace('/', '');
+  const isComics = itemType === 'comics';
 
-  async function fetchData(searchTitle?: string) {
-    setLoadingComics(true);
+  async function fetchData(searchText?: string) {
+    setLoadingItems(true);
     try {
       const timestamp = Number(new Date());
       const hash = md5.create()
       hash.update(timestamp + PRIVATE_KEY + PUBLIC_KEY);
+
+      const comicsUrl = `comics?ts=${timestamp}&orderBy=title&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(searchText ? `&titleStartsWith=${searchText}` : "");
+      const charactersUrl = `characters?ts=${timestamp}&orderBy=name&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(searchText ? `&nameStartsWith=${searchText}` : "");
       
       const { data: { data: { results, total } }} = await api.get(
-          `comics?ts=${timestamp}&orderBy=title&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(searchTitle ? `&titleStartsWith=${searchTitle}` : "")
+        isComics ? comicsUrl : charactersUrl
       ); 
-      setComics(results);
+      setItems(results);
       
       if (total > 0) {
         const totalPages = total / 20; // TODO: Criar constante
@@ -56,16 +61,16 @@ export default function Comics({ history }: TComicsProps) {
     } catch(error) {
       addToast(error.message, { appearance: 'error' })
     } finally {
-      setLoadingComics(false);
+      setLoadingItems(false);
     }
   }
 
-  const [searchTitle, setSearchTitle] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    fetchData(searchTitle);
+    fetchData(searchText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offSet]);
+  }, [offSet, itemType]);
 
   function handlePageClick(data: { selected: number }) {
     const selected = data.selected;
@@ -75,14 +80,14 @@ export default function Comics({ history }: TComicsProps) {
   };
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearchTitle(e.target.value);
+    setSearchText(e.target.value);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
 
-    fetchData(searchTitle);
+    fetchData(searchText);
   }
 
   function handleComicClick(comicId: number) {
@@ -95,11 +100,11 @@ export default function Comics({ history }: TComicsProps) {
               <Row style={{ margin: '0 15px 30px 10px' }}>
                 <form className="comics__search-form" onSubmit={handleSubmit}>
                   <input 
-                    id="searchTitle" 
+                    id="searchText" 
                     onChange={handleSearchChange} 
-                    placeholder="Search by title..."
+                    placeholder={`Search by ${isComics ? 'title' : 'name'}...`}
                   />
-                  {searchTitle ? <AiOutlineClose style={{
+                  {searchText ? <AiOutlineClose style={{
                     position: "relative",
                     right: "35px",
                     fontSize: "20px",
@@ -107,12 +112,12 @@ export default function Comics({ history }: TComicsProps) {
                     color: "#bbb",
                     cursor: "pointer"
                   }} onClick={() => {
-                    const inputSearchTitle = document.getElementById("searchTitle") as HTMLInputElement;
+                    const inputSearchText = document.getElementById("searchText") as HTMLInputElement;
 
-                    if (inputSearchTitle) {
-                      inputSearchTitle.value = "";
+                    if (inputSearchText) {
+                      inputSearchText.value = "";
                     }
-                    setSearchTitle("");
+                    setSearchText("");
                     fetchData();
                     setOffSet(0)
                   }}/> :  <AiOutlineSearch style={{
@@ -124,21 +129,25 @@ export default function Comics({ history }: TComicsProps) {
                   }}/> }
                   <button 
                     type="submit" 
-                    disabled={loadingComics || !searchTitle}
+                    disabled={loadingItems || !searchText}
                   >
                     Search
                   </button>
                 </form>
               </Row>
               <Row>
-                {!loadingComics && comics.map((c) => (
+                {!loadingItems && items.map((c) => (
                   <Col className="comics__col" sm={3} key={c.id}>
-                    <Comic item={c} onClick={handleComicClick}/>
+                    <Comic 
+                      item={c} 
+                      onClick={handleComicClick} 
+                      itemType={itemType}
+                    />
                   </Col>
                 ))}
-                {comics.length === 0 && !loadingComics && "No results found"}
+                {items.length === 0 && !loadingItems && "No results found"}
               </Row>
-              {comics.length > 0 && (
+              {items.length > 0 && (
                 <ReactPaginate
                   previousLabel="Previous"
                   nextLabel="Next"
@@ -161,12 +170,12 @@ export default function Comics({ history }: TComicsProps) {
     <>
       <div className="header__img-wrapper">
         <img 
-          src="./images/comics-banner.jpg" 
+          src={`./images/${itemType}-banner.jpg`} 
           className="header__img-banner"
-          alt="Comics Banner"
+          alt={`${title} Banner`}
         />
       </div>
-      {loadingComics && (
+      {loadingItems && (
         <BarLoader
           width="100%"
           height={4}
@@ -174,7 +183,7 @@ export default function Comics({ history }: TComicsProps) {
         />
       )}
       <Container>
-        <PageHeader title="Comics" />
+        <PageHeader title={title} />
         {renderItems()}
       </Container>
     </>
