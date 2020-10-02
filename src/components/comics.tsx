@@ -45,7 +45,7 @@ export default function Comics({ history }: TComicsProps) {
       hash.update(timestamp + PRIVATE_KEY + PUBLIC_KEY);
       
       const { data: { data: { results, total } }} = await api.get(
-          `comics?ts=${timestamp}&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(searchTitle ? `&titleStartsWith=${searchTitle}` : "")
+          `comics?ts=${timestamp}&orderBy=title&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(searchTitle ? `&titleStartsWith=${searchTitle}` : "")
       ); 
       setComics(results);
       
@@ -131,9 +131,9 @@ export default function Comics({ history }: TComicsProps) {
                 </form>
               </Row>
               <Row>
-                {!loadingComics && comics.map(d => (
-                  <Col className="comics__col" sm={3}>
-                    <Comic item={d} onClick={handleComicClick}/>
+                {!loadingComics && comics.map((c) => (
+                  <Col className="comics__col" sm={3} key={c.id}>
+                    <Comic item={c} onClick={handleComicClick}/>
                   </Col>
                 ))}
                 {comics.length === 0 && !loadingComics && "No results found"}

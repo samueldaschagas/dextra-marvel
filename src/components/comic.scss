@@ -1,5 +1,5 @@
 .comic {
-    width: 220px;
+    width: 250px;
     float: left;
     margin: 10px;
     object-fit: cover;
@@ -16,11 +16,16 @@
 
     .comic__details__name {
         font-weight: 900;
+        height: 50px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 
     .comic__details__footer {
         text-align: right;
-        width: 190px;
+        width: 230px;
         margin-top: 10px;
     }
 }
@@ -32,8 +37,8 @@
 }
 
 .comic img {
-    width: 220px;
-    height: 335px;
+    width: 250px;
+    height: 250px;
     object-fit: cover;
     border-bottom: 1px solid #f0f0f0;
 }

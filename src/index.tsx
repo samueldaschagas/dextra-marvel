@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ToastProvider>
+    <ToastProvider autoDismiss placement="bottom-right">
       <App />
     </ToastProvider>
   </React.StrictMode>,

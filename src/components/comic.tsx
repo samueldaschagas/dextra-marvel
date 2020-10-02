@@ -23,19 +23,19 @@ export default function Comic({ item, onClick }: TComicProps) {
     return (
         <>
             <div className="comic" onClick={() => onClick(item.id)}>
-              <img src={`${item.thumbnail.path}/portrait_incredible.${item.thumbnail.extension}`} alt={`${item.title}`} />
+              <img src={`${item.thumbnail.path}/standard_fantastic.${item.thumbnail.extension}`} alt={`${item.title}`} />
               <div className="comic__details">
                 <div className="comic__details__name">{item.title}</div>
                 <div className="comic__details__footer">
                     {true ? 
-                        <AiOutlineHeart style={{ fontSize: '20px' }} data-tip data-for="notFavorite" /> : 
-                        <AiFillHeart style={{ fontSize: '20px', color: "red" }} data-tip data-for="favorite" />  
+                        <AiOutlineHeart style={{ fontSize: '20px' }} data-tip data-for="favorite" /> : 
+                        <AiFillHeart style={{ fontSize: '20px', color: "red" }} data-tip data-for="removeFavorite" />  
                     }
-                    <ReactTooltip id="notFavorite" place="bottom" effect="solid">
-                        Tornar Favorito
-                    </ReactTooltip>
                     <ReactTooltip id="favorite" place="bottom" effect="solid">
-                        Remover Favorito
+                        Favorite
+                    </ReactTooltip>
+                    <ReactTooltip id="removeFavorite" place="bottom" effect="solid">
+                        Remove Favorite
                     </ReactTooltip>
                 </div>
               </div>

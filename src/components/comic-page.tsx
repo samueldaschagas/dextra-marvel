@@ -64,6 +64,7 @@ export default function ComicPage({ match: { params: { comicId } } }: TComicProp
     }
 
     fetchComic();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   return (
@@ -90,14 +91,14 @@ export default function ComicPage({ match: { params: { comicId } } }: TComicProp
         {!loadingComic && (
           <GridSystemContainer>
             <Row>
-              <Col sm={6}>
+              <Col sm={4}>
                 <img 
                   className="comic-page__img"
-                  src={`${comic?.thumbnail.path}.${comic?.thumbnail.extension}`} 
+                  src={`${comic?.thumbnail.path}/portrait_uncanny.${comic?.thumbnail.extension}`} 
                   alt={`${comic?.title}`} 
                 />
               </Col>
-              <Col sm={6}>
+              <Col sm={8}>
               <ul className="comic-page__details">
                   <li className="comic-page__details__description">{comic?.description}</li>
                   <li> 
