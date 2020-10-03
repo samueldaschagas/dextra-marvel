@@ -26,6 +26,7 @@ type TComic = {
   id: number;
   title: string;
   thumbnail: TThumbnail;
+  favoritedSince: Date;
 };
 
 type TComicsProps = RouteComponentProps & {
@@ -117,7 +118,6 @@ export default function Comics({
   const [favorites, setFavorites] = useState(initialFavorites);
 
   useEffect(() => {
-    console.log("Entrou: ", favorites);
     window.localStorage.setItem(
       '@dextra-marvel/favorites',
       JSON.stringify(favorites)
@@ -194,19 +194,17 @@ export default function Comics({
         </Row>
         <Row>
           {!loadingItems &&
-            items.map((item) => (
-              <>
-                <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
-                  <Comic
-                    item={item}
-                    favorites={favorites}
-                    onClick={handleItemClick}
-                    onSetFavorites={setFavorites}
-                    itemType={itemType}
-                    isMobile={isMobile}
-                  />
-                </Col>
-              </>
+            items.map((item: TComic) => (
+              <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
+                <Comic
+                  item={item}
+                  favorites={favorites}
+                  onClick={handleItemClick}
+                  onSetFavorites={setFavorites}
+                  itemType={itemType}
+                  isMobile={isMobile}
+                />
+              </Col>
             ))}
           {items.length === 0 && !loadingItems && 'No results found'}
         </Row>

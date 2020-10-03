@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+import _ from 'lodash';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useToasts } from 'react-toast-notifications';
@@ -17,12 +19,12 @@ type TComic = {
 };
 
 type TComicProps = {
-  favorites: number[];
+  favorites: (TComic & { favoritedSince: Date })[];
   isMobile: boolean;
-  item: TComic;
+  item: TComic & { favoritedSince: Date };
   itemType: string;
   onClick(comicId: number): void;
-  onSetFavorites(favorites: number[]): void;
+  onSetFavorites(favorites: TComic[]): void;
 };
 
 export default function Comic({
@@ -35,17 +37,19 @@ export default function Comic({
 }: TComicProps) {
   const { addToast } = useToasts();
 
-  function handleFavoriteClick(itemId: number) {
+  function handleFavoriteClick(item: TComic) {
     addToast('You marked this item as a "Favorite"', { appearance: 'success' });
-    onSetFavorites(favorites.concat([itemId]));
+    onSetFavorites(favorites.concat([{ ...item, favoritedSince: new Date() }]));
   }
 
   function handleRemoveFavoriteClick(itemId: number) {
     addToast('Removed from items marked as "Favorite"', {
       appearance: 'success',
     });
-    onSetFavorites(favorites.filter((favoriteId) => favoriteId !== itemId));
+    onSetFavorites(favorites.filter((f) => f.id !== itemId));
   }
+
+  const favoritedItem = favorites.find((f) => f.id === item.id);
 
   return (
     <>
@@ -65,12 +69,20 @@ export default function Comic({
             {item[itemType === 'comics' ? 'title' : 'name']}
           </div>
           <div className="comic__details__footer">
-            {!favorites.includes(item.id) ? (
+            <span className="comic__details__favorited-since">
+              {favoritedItem && (
+                <>
+                  Favorited since{' '}
+                  {format(new Date(favoritedItem.favoritedSince), 'MM/dd/yyyy')}
+                </>
+              )}
+            </span>
+            {!_.map(favorites, 'id').includes(item.id) ? (
               <AiOutlineHeart
                 className="comic__details__favorite-icon"
                 data-tip
                 data-for="favorite"
-                onClick={() => handleFavoriteClick(item.id)}
+                onClick={() => handleFavoriteClick(item)}
               />
             ) : (
               <AiFillHeart

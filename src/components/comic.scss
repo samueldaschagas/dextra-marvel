@@ -28,8 +28,17 @@
   }
 
   .comic__details__footer {
-    text-align: right;
     margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .comic__details__favorited-since {
+    font-size: 12px;
+    display: flex;
+    align-items: flex-end;
+    color: #777;
+    font-style: italic;
   }
 
   .comic__details__favorite-icon {
