@@ -16,7 +16,7 @@ import {
 import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai';
-import _, { isEmpty } from 'lodash';
+import _ from 'lodash';
 
 type TThumbnail = {
   extension: string;
@@ -51,10 +51,12 @@ export default function Comics({
   const [offSet, setOffSet] = useState(0);
   const itemType = path.replace('/', '');
   const isComics = itemType === 'comics';
+  const LOCAL_STORAGE_KEY = `@dextra-marvel/favorites-${isComics ? "comics" : "characters"}`; 
 
   useEffect(() => {
     setOffSet(0);
     setSelectedPage(0);
+    setFavorites(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]'));
     const inputSearchText = document.getElementById(
       'searchText'
     ) as HTMLInputElement;
@@ -114,13 +116,18 @@ export default function Comics({
     setOffSet(selectedOffSet);
   }
 
+  /* 
+    Referência utilizada para armazenar os favoritos em localStorage com react hook:
+    https://egghead.io/lessons/react-store-values-in-localstorage-with-the-react-useeffect-hook 
+  */
+  
   const initialFavorites = () =>
-    JSON.parse(window.localStorage.getItem('@dextra-marvel/favorites') || '[]');
+    JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
   const [favorites, setFavorites] = useState(initialFavorites);
 
   useEffect(() => {
     window.localStorage.setItem(
-      '@dextra-marvel/favorites',
+      LOCAL_STORAGE_KEY,
       JSON.stringify(favorites)
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,7 +209,9 @@ export default function Comics({
               }}
               disabled={_.isEmpty(favorites)}
             >
-              {isShowOnlyFavorites ? 'Show All' : 'Show Only Favorites'}
+              {isShowOnlyFavorites
+                ? 'Show All'
+                : `Show Only Favorites (${favorites.length})`}
             </button>
             <button
               className="btn"
