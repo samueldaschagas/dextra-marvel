@@ -143,10 +143,10 @@ export default function Comics({
   function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-    
+
     setOffSet(0);
     setSelectedPage(0);
-    setSelectedFirstLetter("");
+    setSelectedFirstLetter('');
     fetchData(searchText);
   }
 
@@ -156,7 +156,9 @@ export default function Comics({
 
   const [selectedFirstLetter, setSelectedFirstLetter] = useState('');
 
-  function handleFilterByLetter(letter: string) {
+  function handleFilterByLetter(e: React.ChangeEvent<HTMLSelectElement>) {
+    const letter = e.target.value;
+
     if (letter !== selectedFirstLetter) {
       setOffSet(0);
       setSelectedPage(0);
@@ -291,6 +293,11 @@ export default function Comics({
                       inputSearchText.value = '';
                     }
                     setSearchText('');
+                    setSelectedFirstLetter('')
+
+                    if (isShowOnlyFavorites) {
+                      fetchData();
+                    }
                   }}
                   disabled={_.isEmpty(favorites)}
                 >
@@ -329,21 +336,27 @@ export default function Comics({
           </div>
         </div>
         <div className="comics__filter-first-letter">
-          <label>Filter by first letter:</label>
-          {ALPHABET.map((letter) => (
-            <a
-              className={
-                selectedFirstLetter === letter
-                  ? 'comics__selected-first-letter'
-                  : ''
-              }
-              onClick={() => handleFilterByLetter(letter)}
-            >
-              {letter}
-            </a>
-          ))}
-          <button className="btn" onClick={() => handleFilterByLetter('')}>
-            Clear Filter
+          <label>Filter by letter: </label>
+          <select
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              handleFilterByLetter(e)
+            }
+            value={selectedFirstLetter}
+          >
+            <option value="">All</option>
+            {ALPHABET.map((letter) => (
+              <option value={letter}>{letter}</option>
+            ))}
+          </select>
+          <button
+            className="btn btn-clear"
+            onClick={() => {
+              setSelectedFirstLetter('');
+              fetchData();
+            }}
+            disabled={!selectedFirstLetter}
+          >
+            Clear
           </button>
         </div>
         {renderItems()}
