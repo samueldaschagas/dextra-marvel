@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import _ from 'lodash';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
@@ -84,8 +84,8 @@ export default function Comic({
             <span className="comic__details__favorited-since">
               {favoritedItem && (
                 <>
-                  Favorited since{' '}
-                  {format(new Date(favoritedItem.favoritedSince), 'MM/dd/yyyy')}
+                  Favorited at{' '}
+                  {formatDistance(new Date(favoritedItem.favoritedSince), new Date())}
                 </>
               )}
             </span>

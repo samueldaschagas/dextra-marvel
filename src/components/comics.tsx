@@ -147,6 +147,7 @@ export default function Comics({
     setOffSet(0);
     setSelectedPage(0);
     setSelectedFirstLetter('');
+    setIsShowOnlyFavorites(false);
     fetchData(searchText);
   }
 
@@ -162,6 +163,7 @@ export default function Comics({
     if (letter !== selectedFirstLetter) {
       setOffSet(0);
       setSelectedPage(0);
+      setIsShowOnlyFavorites(false);
       const inputSearchText = document.getElementById(
         'searchText'
       ) as HTMLInputElement;
