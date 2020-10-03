@@ -1,40 +1,63 @@
 .comic-page__img {
-    float: left;
-    margin-left: 10px;;
+  float: left;
+  margin-left: 10px;
+}
+
+.comic-page__to-back {
+  text-align: left;
+  padding: 0px 25px;
 }
 
 .comic-page__details {
-    text-align: left !important;
+  text-align: left !important;
 
-    li {
-        margin: 10px 0;
-    }
+  li {
+    margin: 10px 0;
+  }
 
-    em {
-        font-style: italic !important;
-    }
+  em {
+    font-style: italic !important;
+  }
 
-    strong {
-        font-weight: 900;
-    }
+  strong {
+    font-weight: 900;
+  }
 }
 
 .comic-page__details__description {
-    text-align: justify;
+  text-align: justify;
 }
 
 .comic-page__details__creator {
-    padding: 8px;
+  padding: 8px;
 }
 
 .comic-page__details__price {
-    font-size: 30px;
-    text-align: left;
-    font-weight: 900;
+  font-size: 30px;
+  text-align: left;
+  font-weight: 900;
 }
 
 .comic-page__details__rule {
-    color: #777;
-    text-transform: uppercase;
-    font-size: 12px;
+  color: #777;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+@media (max-width: 992px) {
+  .comic-page__img {
+    float: none;
+    margin: 0 0 25px;
+  }
+
+  .container {
+    margin-top: 68px;
+  }
+}
+
+@media (max-width: 768px) {
+  .comic-page__to-back {
+    margin-top: 68px;
+  }
 }
