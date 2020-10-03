@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import _ from 'lodash';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useToasts } from 'react-toast-notifications';
 import ReactTooltip from 'react-tooltip';
@@ -38,13 +38,22 @@ export default function Comic({
   onClick,
 }: TComicProps) {
   const { addToast } = useToasts();
+  const [showTooltips, setShowTooltips] = useState(true);
+
+  useEffect(() => {
+    if (!showTooltips) {
+      setShowTooltips(true);
+    }
+  }, [showTooltips]);
 
   function handleFavoriteClick(item: TComic) {
+    setShowTooltips(false);
     addToast('You marked this item as a "Favorite"', { appearance: 'success' });
     onSetFavorites(favorites.concat([{ ...item, favoritedSince: new Date() }]));
   }
 
   function handleRemoveFavoriteClick(itemId: number) {
+    setShowTooltips(false);
     addToast('Removed from items marked as "Favorite"', {
       appearance: 'success',
     });
@@ -83,7 +92,7 @@ export default function Comic({
                 </>
               )}
             </span>
-            {!_.map(favorites, 'id').includes(item.id) ? (
+            {!favoritedItem ? (
               <AiOutlineHeart
                 className="comic__details__favorite-icon"
                 data-tip
@@ -98,12 +107,16 @@ export default function Comic({
                 onClick={() => handleRemoveFavoriteClick(item.id)}
               />
             )}
-            <ReactTooltip id="favorite" place="top" effect="solid">
-              Mark as "Favorite"
-            </ReactTooltip>
-            <ReactTooltip id="removeFavorite" place="top" effect="solid">
-              Remove "Favorite"
-            </ReactTooltip>
+            {showTooltips && (
+              <>
+                <ReactTooltip id="favorite" place="top" effect="solid">
+                  Mark as "Favorite"
+                </ReactTooltip>
+                <ReactTooltip id="removeFavorite" place="top" effect="solid">
+                  Remove "Favorite"
+                </ReactTooltip>
+              </>
+            )}
           </div>
         </div>
       </div>

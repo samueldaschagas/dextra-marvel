@@ -62,6 +62,7 @@ export default function Comics({
     setFavorites(
       JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]')
     );
+    setIsShowOnlyFavorites(false);
     const inputSearchText = document.getElementById(
       'searchText'
     ) as HTMLInputElement;
@@ -231,7 +232,9 @@ export default function Comics({
                   onClick={() => {
                     if (
                       window.confirm(
-                        'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
+                        `Do you really want to remove all ${
+                          isComics ? 'comics' : 'characters'
+                        } marked as "Favorite"? This operation cannot be undone.`
                       )
                     ) {
                       setFavorites([]);
