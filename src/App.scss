@@ -196,3 +196,51 @@ table {
     }
   }
 }
+
+.comics__mobile-search-form {
+  @extend .comics__search-form;
+
+  width: 100%;
+
+  input {
+    height: 45px;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    width: 70%;
+  }
+
+  button {
+    height: 45px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    width: 30%;
+  }
+}
+
+.comics__search-form-search-icon {
+  position: relative;
+  right: 35px;
+  font-size: 20px;
+  top: 4px;
+  color: #bbb;
+}
+
+.comics__search-form-close-icon {
+  @extend .comics__search-form-search-icon;
+
+  cursor: pointer;
+}
+
+.comics__mobile-search-form-search-icon {
+  color: rgb(187, 187, 187);
+  position: absolute;
+  right: 35%;
+  font-size: 25px;
+  top: 10px;
+}
+
+.comics__mobile-search-form-close-icon {
+  @extend .comics__mobile-search-form-search-icon;
+
+  cursor: pointer;
+}

@@ -7,7 +7,7 @@ import md5 from 'js-md5';
 import { useToasts } from 'react-toast-notifications';
 import { BarLoader } from 'react-spinners';
 import { Container } from './container/container';
-import { Container as GridSystemContainer, Col, Row } from 'react-grid-system';
+import { Container as GridSystemContainer, Col, Row, Visible, useScreenClass, Hidden } from 'react-grid-system';
 import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
@@ -110,39 +110,33 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
     history.push(`/${itemType}/${id}`);
   }
 
+  const screenClass = useScreenClass();
+  const isMobile = ['xs', 'sm'].includes(screenClass);
+
   function renderItems() {
       return (
           <GridSystemContainer>
               <Row style={{ margin: '0 15px 30px 10px' }}>
-                <form className="comics__search-form" onSubmit={handleSubmit}>
+                <form className={isMobile ? "comics__mobile-search-form" : "comics__search-form"} onSubmit={handleSubmit}>
                   <input 
                     id="searchText" 
                     onChange={handleSearchChange} 
                     placeholder={`Search by ${isComics ? 'title' : 'name'}...`}
                   />
-                  {searchText ? <AiOutlineClose style={{
-                    position: "relative",
-                    right: "35px",
-                    fontSize: "20px",
-                    top: "4px",
-                    color: "#bbb",
-                    cursor: "pointer"
-                  }} onClick={() => {
-                    const inputSearchText = document.getElementById("searchText") as HTMLInputElement;
+                    {searchText ? 
+                    <AiOutlineClose 
+                      className={isMobile ? "comics__mobile-search-form-close-icon" : "comics__search-form-close-icon" }
+                      onClick={() => {
+                        const inputSearchText = document.getElementById("searchText") as HTMLInputElement;
 
-                    if (inputSearchText) {
-                      inputSearchText.value = "";
-                    }
-                    setSearchText("");
-                    fetchData();
-                    setOffSet(0)
-                  }}/> :  <AiOutlineSearch style={{
-                    position: "relative",
-                    right: "35px",
-                    fontSize: "20px",
-                    top: "4px",
-                    color: "#bbb"
-                  }}/> }
+                        if (inputSearchText) {
+                          inputSearchText.value = "";
+                        }
+                        setSearchText("");
+                        fetchData();
+                        setOffSet(0)
+                      }}/> :  
+                      <AiOutlineSearch className={isMobile ? "comics__mobile-search-form-search-icon" : "comics__search-form-search-icon"} /> }
                   <button 
                     type="submit" 
                     disabled={loadingItems || !searchText}
@@ -152,14 +146,17 @@ export default function Comics({ history, title, match: { path } }: TComicsProps
                 </form>
               </Row>
               <Row>
-                {!loadingItems && items.map((c) => (
-                  <Col className="comics__col" sm={3} key={c.id}>
-                    <Comic 
-                      item={c} 
-                      onClick={handleItemClick} 
-                      itemType={itemType}
-                    />
-                  </Col>
+                {!loadingItems && items.map((item) => (
+                  <>
+                    <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
+                      <Comic 
+                        item={item} 
+                        onClick={handleItemClick} 
+                        itemType={itemType}
+                        isMobile={isMobile}
+                      />
+                    </Col>
+                  </>
                 ))}
                 {items.length === 0 && !loadingItems && "No results found"}
               </Row>

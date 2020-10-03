@@ -16,17 +16,18 @@ type TComic = {
 };
 
 type TComicProps = {
+    isMobile: boolean;
     item: TComic;
     itemType: string;
     onClick(comicId: number): void;
 };
 
-export default function Comic({ item, itemType, onClick }: TComicProps) {
+export default function Comic({ isMobile, item, itemType, onClick }: TComicProps) {
     return (
         <>
-            <div className="comic" onClick={() => onClick(item.id)}>
+            <div className={isMobile ? "comic-mobile" : "comic"} onClick={() => onClick(item.id)}>
               <img 
-                src={`${item.thumbnail.path}/standard_fantastic.${item.thumbnail.extension}`} 
+                src={`${item.thumbnail.path}/${isMobile ? "portrait_uncanny" : "standard_fantastic"}.${item.thumbnail.extension}`} 
                 alt={`${item[itemType === 'comics' ? 'title' : 'name']}`} 
                 />
               <div className="comic__details">

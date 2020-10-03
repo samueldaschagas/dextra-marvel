@@ -42,3 +42,30 @@
     object-fit: cover;
     border-bottom: 1px solid #f0f0f0;
 }
+
+.comic-mobile {
+    box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
+    cursor: pointer;
+    width: 300px;
+    margin: 0 auto;
+
+    .comic__details {
+        padding: 10px;
+        width: 100%;
+    }
+
+    .comic__details__name {
+        font-weight: 900;
+        height: 50px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .comic__details__footer {
+        text-align: right;
+        width: 230px;
+        margin-top: 10px;
+    }
+}
