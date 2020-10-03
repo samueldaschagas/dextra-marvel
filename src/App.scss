@@ -354,6 +354,12 @@ table {
   cursor: pointer;
 }
 
+@media (max-width: 578px) {
+  .comics__actions-bar .btn {
+    margin-bottom: 10px;
+  }
+}
+
 @media (max-width: 768px) {
   .header__nav {
     justify-content: space-between;
@@ -376,5 +382,22 @@ table {
 
   .header__img-banner {
     margin-top: 68px;
+  }
+}
+
+@media (max-width: 992px) {
+  .comics__actions-bar {
+    display: block;
+  }
+
+  .comics__actions-bar .btn {
+    height: 45px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 992px) {
+  .comics__actions-bar .btn {
+    margin-left: -10px;
   }
 }

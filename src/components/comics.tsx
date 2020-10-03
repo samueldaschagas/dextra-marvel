@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { PageHeader } from './page-header/page-header';
-import '../App.scss';
-import Comic from './comic';
-import api from '../api';
 import md5 from 'js-md5';
-import { useToasts } from 'react-toast-notifications';
-import { BarLoader } from 'react-spinners';
-import { Container } from './container/container';
+import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
 import {
-  Container as GridSystemContainer,
   Col,
+  Container as GridSystemContainer,
   Row,
   useScreenClass,
+  Visible,
 } from 'react-grid-system';
+import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
 import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
-import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai';
-import _ from 'lodash';
+import { BarLoader } from 'react-spinners';
+import { useToasts } from 'react-toast-notifications';
+import api from '../api';
+import '../App.scss';
+import Comic from './comic';
+import { Container } from './container/container';
+import { PageHeader } from './page-header/page-header';
 
 type TThumbnail = {
   extension: string;
@@ -51,12 +52,16 @@ export default function Comics({
   const [offSet, setOffSet] = useState(0);
   const itemType = path.replace('/', '');
   const isComics = itemType === 'comics';
-  const LOCAL_STORAGE_KEY = `@dextra-marvel/favorites-${isComics ? "comics" : "characters"}`; 
+  const LOCAL_STORAGE_KEY = `@dextra-marvel/favorites-${
+    isComics ? 'comics' : 'characters'
+  }`;
 
   useEffect(() => {
     setOffSet(0);
     setSelectedPage(0);
-    setFavorites(JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]'));
+    setFavorites(
+      JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]')
+    );
     const inputSearchText = document.getElementById(
       'searchText'
     ) as HTMLInputElement;
@@ -120,16 +125,13 @@ export default function Comics({
     Referência utilizada para armazenar os favoritos em localStorage com react hook:
     https://egghead.io/lessons/react-store-values-in-localstorage-with-the-react-useeffect-hook 
   */
-  
+
   const initialFavorites = () =>
     JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
   const [favorites, setFavorites] = useState(initialFavorites);
 
   useEffect(() => {
-    window.localStorage.setItem(
-      LOCAL_STORAGE_KEY,
-      JSON.stringify(favorites)
-    );
+    window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(favorites));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [favorites.length]);
 
@@ -149,7 +151,7 @@ export default function Comics({
   }
 
   const screenClass = useScreenClass();
-  const isMobile = ['xs', 'sm'].includes(screenClass);
+  const isMobile = ['xs', 'sm', 'md'].includes(screenClass);
   const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
 
   function renderItems() {
@@ -201,37 +203,53 @@ export default function Comics({
             </button>
           </form>
           <div className="comics__more-actions">
-            <button
-              className="btn"
-              style={{ marginRight: '15px' }}
-              onClick={() => {
-                setIsShowOnlyFavorites(!isShowOnlyFavorites);
-              }}
-              disabled={_.isEmpty(favorites)}
-            >
-              {isShowOnlyFavorites
-                ? 'Show All'
-                : `Show Only Favorites (${favorites.length})`}
-            </button>
-            <button
-              className="btn"
-              onClick={() => {
-                if (
-                  window.confirm(
-                    'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
-                  )
-                ) {
-                  setFavorites([]);
-                  setIsShowOnlyFavorites(false);
-                  addToast('Favorites have been removed', {
-                    appearance: 'success',
-                  });
-                }
-              }}
-              disabled={_.isEmpty(favorites)}
-            >
-              Clear Favorites
-            </button>
+            <Row>
+              <Col>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    setIsShowOnlyFavorites(!isShowOnlyFavorites);
+                    const inputSearchText = document.getElementById(
+                      'searchText'
+                    ) as HTMLInputElement;
+
+                    if (inputSearchText) {
+                      inputSearchText.value = '';
+                    }
+                    setSearchText('');
+                  }}
+                  disabled={_.isEmpty(favorites)}
+                >
+                  {isShowOnlyFavorites
+                    ? 'Show All'
+                    : `Show Only Favorites (${favorites.length})`}
+                </button>
+              </Col>
+              <Col>
+                <button
+                  className="btn"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
+                      )
+                    ) {
+                      setFavorites([]);
+                      setIsShowOnlyFavorites(false);
+                      addToast('Favorites have been removed', {
+                        appearance: 'success',
+                      });
+                    }
+                  }}
+                  disabled={_.isEmpty(favorites)}
+                >
+                  Clear Favorites
+                </button>
+              </Col>
+            </Row>
+            <Visible md sm xs>
+              <hr />
+            </Visible>
           </div>
         </div>
         <Row>
