@@ -16,6 +16,7 @@ import {
 import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai';
+import _, { isEmpty } from 'lodash';
 
 type TThumbnail = {
   extension: string;
@@ -142,6 +143,7 @@ export default function Comics({
 
   const screenClass = useScreenClass();
   const isMobile = ['xs', 'sm'].includes(screenClass);
+  const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
 
   function renderItems() {
     return (
@@ -191,34 +193,51 @@ export default function Comics({
               Search
             </button>
           </form>
-          <button
-            className="btn"
-            onClick={() => {
-              if (
-                window.confirm(
-                  'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
-                )
-              ) {
-                setFavorites([]);
-                addToast('Favorites have been removed', {
-                  appearance: 'success',
-                });
-              }
-            }}
-            disabled={favorites.length === 0}
-          >
-            Clear Favorites
-          </button>
+          <div className="comics__more-actions">
+            <button
+              className="btn"
+              style={{ marginRight: '15px' }}
+              onClick={() => {
+                setIsShowOnlyFavorites(!isShowOnlyFavorites);
+              }}
+              disabled={_.isEmpty(favorites)}
+            >
+              {isShowOnlyFavorites ? 'Show All' : 'Show Only Favorites'}
+            </button>
+            <button
+              className="btn"
+              onClick={() => {
+                if (
+                  window.confirm(
+                    'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
+                  )
+                ) {
+                  setFavorites([]);
+                  setIsShowOnlyFavorites(false);
+                  addToast('Favorites have been removed', {
+                    appearance: 'success',
+                  });
+                }
+              }}
+              disabled={_.isEmpty(favorites)}
+            >
+              Clear Favorites
+            </button>
+          </div>
         </div>
         <Row>
           {!loadingItems &&
-            items.map((item: TComic) => (
+            (isShowOnlyFavorites && !_.isEmpty(favorites)
+              ? favorites
+              : items
+            ).map((item: TComic) => (
               <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
                 <Comic
                   item={item}
                   favorites={favorites}
                   onClick={handleItemClick}
                   onSetFavorites={setFavorites}
+                  onSetIsShowOnlyFavorites={setIsShowOnlyFavorites}
                   itemType={itemType}
                   isMobile={isMobile}
                 />
@@ -226,7 +245,7 @@ export default function Comics({
             ))}
           {items.length === 0 && !loadingItems && 'No results found'}
         </Row>
-        {items.length > 0 && (
+        {items.length > 0 && !isShowOnlyFavorites && (
           <ReactPaginate
             previousLabel="Previous"
             nextLabel="Next"

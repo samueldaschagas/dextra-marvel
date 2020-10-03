@@ -25,6 +25,7 @@ type TComicProps = {
   itemType: string;
   onClick(comicId: number): void;
   onSetFavorites(favorites: TComic[]): void;
+  onSetIsShowOnlyFavorites(isShowOnlyFavorites: boolean): void;
 };
 
 export default function Comic({
@@ -33,6 +34,7 @@ export default function Comic({
   item,
   itemType,
   onSetFavorites,
+  onSetIsShowOnlyFavorites,
   onClick,
 }: TComicProps) {
   const { addToast } = useToasts();
@@ -46,7 +48,11 @@ export default function Comic({
     addToast('Removed from items marked as "Favorite"', {
       appearance: 'success',
     });
-    onSetFavorites(favorites.filter((f) => f.id !== itemId));
+    const filteredFavorites = favorites.filter((f) => f.id !== itemId);
+    onSetFavorites(filteredFavorites);
+    if (_.isEmpty(filteredFavorites)) {
+      onSetIsShowOnlyFavorites(false);
+    }
   }
 
   const favoritedItem = favorites.find((f) => f.id === item.id);
