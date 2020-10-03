@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import _ from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useToasts } from 'react-toast-notifications';
 import ReactTooltip from 'react-tooltip';
@@ -23,6 +23,8 @@ type TComicProps = {
   isMobile: boolean;
   item: TComic & { favoritedSince: Date };
   itemType: string;
+  showTooltips: boolean;
+  onSetShowTooltips(showTooltips: boolean): void;
   onClick(comicId: number): void;
   onSetFavorites(favorites: TComic[]): void;
   onSetIsShowOnlyFavorites(isShowOnlyFavorites: boolean): void;
@@ -33,27 +35,22 @@ export default function Comic({
   isMobile,
   item,
   itemType,
+  showTooltips,
+  onSetShowTooltips,
   onSetFavorites,
   onSetIsShowOnlyFavorites,
   onClick,
 }: TComicProps) {
   const { addToast } = useToasts();
-  const [showTooltips, setShowTooltips] = useState(true);
-
-  useEffect(() => {
-    if (!showTooltips) {
-      setShowTooltips(true);
-    }
-  }, [showTooltips]);
 
   function handleFavoriteClick(item: TComic) {
-    setShowTooltips(false);
+    onSetShowTooltips(false);
     addToast('You marked this item as a "Favorite"', { appearance: 'success' });
     onSetFavorites(favorites.concat([{ ...item, favoritedSince: new Date() }]));
   }
 
   function handleRemoveFavoriteClick(itemId: number) {
-    setShowTooltips(false);
+    onSetShowTooltips(false);
     addToast('Removed from items marked as "Favorite"', {
       appearance: 'success',
     });

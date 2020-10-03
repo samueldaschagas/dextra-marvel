@@ -178,6 +178,13 @@ export default function Comics({
   const screenClass = useScreenClass();
   const isMobile = ['xs', 'sm', 'md'].includes(screenClass);
   const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
+  const [showTooltips, setShowTooltips] = useState(true);
+
+  useEffect(() => {
+    if (!showTooltips) {
+      setShowTooltips(true);
+    }
+  }, [showTooltips]);
 
   function renderItems() {
     return (
@@ -197,6 +204,8 @@ export default function Comics({
                   onSetIsShowOnlyFavorites={setIsShowOnlyFavorites}
                   itemType={itemType}
                   isMobile={isMobile}
+                  showTooltips={showTooltips}
+                  onSetShowTooltips={setShowTooltips}
                 />
               </Col>
             ))}
@@ -318,10 +327,13 @@ export default function Comics({
                       )
                     ) {
                       setFavorites([]);
+                      setShowTooltips(false);
                       setIsShowOnlyFavorites(false);
                       addToast('Favorites have been removed', {
                         appearance: 'success',
                       });
+                      setSelectedPage(0);
+                      setOffSet(0);
                     }
                   }}
                   disabled={_.isEmpty(favorites)}
