@@ -1,10 +1,13 @@
 import React, { CSSProperties } from 'react';
+import { useScreenClass } from 'react-grid-system';
 import { BrowserRouter as Router, NavLink, Redirect, Route, Switch } from "react-router-dom";
 import './App.scss';
 import ComicPage from './components/comic-page';
 import Comics from './components/comics';
 
 function App() {
+  const screenClass = useScreenClass();
+  const isMobile = ['xs', 'sm'].includes(screenClass);
   const activeStyle: CSSProperties = {
     color: "#ef4f21"
   };
@@ -16,7 +19,7 @@ function App() {
           <nav className="header__nav">
             <span className="header__nav__brand">
               <NavLink activeStyle={activeStyle} to="/comics">
-                <img src="./images/logo.svg" alt="Logo Marvel" />
+                <img src={`./images/${isMobile? "mobile-logo.png" : "logo.svg"}`} alt="Logo Marvel" />
               </NavLink>
             </span>
             <ul>

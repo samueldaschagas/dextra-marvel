@@ -244,3 +244,28 @@ table {
 
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .header__nav {
+    justify-content: space-between;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .header__nav__dextra-link {
+    display: none;
+  }
+
+  .header__nav ul {
+    margin-left: 0;
+  }
+
+  .header__nav li {
+    padding: 10px;
+  }
+
+  .header__img-banner {
+    margin-top: 68px;
+  }
+}
