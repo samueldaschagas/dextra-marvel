@@ -146,7 +146,7 @@ export default function Comics({
   function renderItems() {
     return (
       <GridSystemContainer>
-        <Row style={{ margin: '0 15px 30px 10px' }}>
+        <div className="comics__actions-bar">
           <form
             className={
               isMobile ? 'comics__mobile-search-form' : 'comics__search-form'
@@ -191,7 +191,25 @@ export default function Comics({
               Search
             </button>
           </form>
-        </Row>
+          <button
+            className="btn"
+            onClick={() => {
+              if (
+                window.confirm(
+                  'Do you really want to remove all items marked as "Favorite"? This operation cannot be undone.'
+                )
+              ) {
+                setFavorites([]);
+                addToast('Favorites have been removed', {
+                  appearance: 'success',
+                });
+              }
+            }}
+            disabled={favorites.length === 0}
+          >
+            Clear Favorites
+          </button>
+        </div>
         <Row>
           {!loadingItems &&
             items.map((item: TComic) => (
