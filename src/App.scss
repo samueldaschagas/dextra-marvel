@@ -37,7 +37,6 @@ s,
 samp,
 small,
 strike,
-strong,
 sub,
 sup,
 tt,
@@ -383,6 +382,28 @@ table {
   .header__img-banner {
     margin-top: 68px;
   }
+}
+
+.comics__filter-first-letter {
+  text-align: left;
+  padding: 0 15px 30px;
+
+  label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: 900;
+  }
+
+  a {
+    margin-right: 20px;
+    cursor: pointer;
+    color: #777;
+  }
+}
+
+.comics__selected-first-letter {
+  color: #ef4f21 !important;
+  font-weight: 900;
 }
 
 @media (max-width: 992px) {

@@ -37,6 +37,7 @@ type TComicsProps = RouteComponentProps & {
 
 const PUBLIC_KEY = '4ee2cb620530c8a433645ce054a014cb';
 const PRIVATE_KEY = '3a391728aa873a351b28c250786cbb300cf6e303';
+const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function Comics({
   history,
@@ -108,7 +109,7 @@ export default function Comics({
   }
 
   useEffect(() => {
-    fetchData(searchText);
+    fetchData(selectedFirstLetter || searchText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offSet]);
 
@@ -126,7 +127,6 @@ export default function Comics({
     Referência utilizada para armazenar os favoritos em localStorage com react hook:
     https://egghead.io/lessons/react-store-values-in-localstorage-with-the-react-useeffect-hook 
   */
-
   const initialFavorites = () =>
     JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
   const [favorites, setFavorites] = useState(initialFavorites);
@@ -140,15 +140,37 @@ export default function Comics({
     setSearchText(e.target.value);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     e.stopPropagation();
-
+    
+    setOffSet(0);
+    setSelectedPage(0);
+    setSelectedFirstLetter("");
     fetchData(searchText);
   }
 
   function handleItemClick(id: number) {
     history.push(`/${itemType}/${id}`);
+  }
+
+  const [selectedFirstLetter, setSelectedFirstLetter] = useState('');
+
+  function handleFilterByLetter(letter: string) {
+    if (letter !== selectedFirstLetter) {
+      setOffSet(0);
+      setSelectedPage(0);
+      const inputSearchText = document.getElementById(
+        'searchText'
+      ) as HTMLInputElement;
+
+      if (inputSearchText) {
+        inputSearchText.value = '';
+      }
+      setSearchText('');
+      setSelectedFirstLetter(letter);
+      fetchData(letter);
+    }
   }
 
   const screenClass = useScreenClass();
@@ -158,12 +180,63 @@ export default function Comics({
   function renderItems() {
     return (
       <GridSystemContainer>
+        <Row>
+          {!loadingItems &&
+            (isShowOnlyFavorites && !_.isEmpty(favorites)
+              ? favorites
+              : items
+            ).map((item: TComic) => (
+              <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
+                <Comic
+                  item={item}
+                  favorites={favorites}
+                  onClick={handleItemClick}
+                  onSetFavorites={setFavorites}
+                  onSetIsShowOnlyFavorites={setIsShowOnlyFavorites}
+                  itemType={itemType}
+                  isMobile={isMobile}
+                />
+              </Col>
+            ))}
+          {items.length === 0 && !loadingItems && 'No results found'}
+        </Row>
+        {items.length > 0 && !isShowOnlyFavorites && (
+          <ReactPaginate
+            previousLabel="Previous"
+            nextLabel="Next"
+            breakLabel="..."
+            breakClassName="break-me"
+            pageCount={totalPages}
+            forcePage={selectedPage}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageClick}
+            containerClassName="pagination"
+            activeClassName="active"
+          />
+        )}
+      </GridSystemContainer>
+    );
+  }
+
+  return (
+    <>
+      <div className="header__img-wrapper">
+        <img
+          src={`./images/${itemType}-banner.jpg`}
+          className="header__img-banner"
+          alt={`${title} Banner`}
+        />
+      </div>
+      {loadingItems && <BarLoader width="100%" height={4} color="#ef4f21" />}
+      <Container>
+        <PageHeader title={title} />
         <div className="comics__actions-bar">
           <form
             className={
               isMobile ? 'comics__mobile-search-form' : 'comics__search-form'
             }
-            onSubmit={handleSubmit}
+            onSubmit={handleSearchSubmit}
           >
             <input
               id="searchText"
@@ -255,57 +328,24 @@ export default function Comics({
             </Visible>
           </div>
         </div>
-        <Row>
-          {!loadingItems &&
-            (isShowOnlyFavorites && !_.isEmpty(favorites)
-              ? favorites
-              : items
-            ).map((item: TComic) => (
-              <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
-                <Comic
-                  item={item}
-                  favorites={favorites}
-                  onClick={handleItemClick}
-                  onSetFavorites={setFavorites}
-                  onSetIsShowOnlyFavorites={setIsShowOnlyFavorites}
-                  itemType={itemType}
-                  isMobile={isMobile}
-                />
-              </Col>
-            ))}
-          {items.length === 0 && !loadingItems && 'No results found'}
-        </Row>
-        {items.length > 0 && !isShowOnlyFavorites && (
-          <ReactPaginate
-            previousLabel="Previous"
-            nextLabel="Next"
-            breakLabel="..."
-            breakClassName="break-me"
-            pageCount={totalPages}
-            forcePage={selectedPage}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName="pagination"
-            activeClassName="active"
-          />
-        )}
-      </GridSystemContainer>
-    );
-  }
-
-  return (
-    <>
-      <div className="header__img-wrapper">
-        <img
-          src={`./images/${itemType}-banner.jpg`}
-          className="header__img-banner"
-          alt={`${title} Banner`}
-        />
-      </div>
-      {loadingItems && <BarLoader width="100%" height={4} color="#ef4f21" />}
-      <Container>
-        <PageHeader title={title} />
+        <div className="comics__filter-first-letter">
+          <label>Filter by first letter:</label>
+          {ALPHABET.map((letter) => (
+            <a
+              className={
+                selectedFirstLetter === letter
+                  ? 'comics__selected-first-letter'
+                  : ''
+              }
+              onClick={() => handleFilterByLetter(letter)}
+            >
+              {letter}
+            </a>
+          ))}
+          <button className="btn" onClick={() => handleFilterByLetter('')}>
+            Clear Filter
+          </button>
+        </div>
         {renderItems()}
       </Container>
     </>
