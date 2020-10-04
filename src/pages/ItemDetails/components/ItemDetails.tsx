@@ -5,13 +5,13 @@ import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import api from '../api';
-import { PRIVATE_KEY, PUBLIC_KEY } from '../constants';
-import { CharacterDetails } from './character-details';
-import { ComicDetails } from './comic-details';
-import './comic-page.scss';
-import { Container } from './container/container';
-import { PageHeader } from './page-header/page-header';
+import api from '../../../api';
+import { Container } from '../../../components/container/container';
+import { PageHeader } from '../../../components/page-header/page-header';
+import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
+import { CharacterDetails } from './CharacterDetails';
+import { ComicDetails } from './ComicDetails';
+import './ItemDetails.scss';
 
 type TThumbnail = {
   extension: string;
@@ -40,7 +40,7 @@ type TComicProps = RouteComponentProps<{ comicId: string }> & {
   item: TComic;
 };
 
-export default function ComicPage({
+export function ItemDetails({
   match: {
     path = '',
     params: { comicId },

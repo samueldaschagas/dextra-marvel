@@ -8,8 +8,11 @@ import {
   Switch,
 } from 'react-router-dom';
 import './App.scss';
-import ComicPage from './components/comic-page';
-import Comics from './components/comics';
+import logoDextraFooter from './images/logo-dextra-footer.png';
+import logoDextra from './images/logo-dextra.png';
+import logoMarvelMobile from './images/logo-marvel-mobile.png';
+import logoMarvel from './images/logo-marvel.svg';
+import { ItemDetails, Items } from './pages';
 
 function App() {
   const screenClass = useScreenClass();
@@ -26,7 +29,7 @@ function App() {
             <span className="header__nav__brand">
               <NavLink activeStyle={activeStyle} to="/comics">
                 <img
-                  src={`./images/${isMobile ? 'mobile-logo.png' : 'logo.svg'}`}
+                  src={isMobile ? logoMarvelMobile : logoMarvel}
                   alt="Logo Marvel"
                 />
               </NavLink>
@@ -49,7 +52,7 @@ function App() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src="./images/logo-dextra-branca.png" alt="Logo Dextra" />
+                <img src={logoDextra} alt="Logo Dextra" />
               </a>
             </span>
           </nav>
@@ -60,15 +63,15 @@ function App() {
           <Route
             exact
             path="/comics"
-            render={(props) => <Comics {...props} title="Comics" />}
+            render={(props) => <Items {...props} title="Comics" />}
           />
-          <Route exact path="/comics/:comicId" component={ComicPage} />
+          <Route exact path="/comics/:comicId" component={ItemDetails} />
           <Route
             exact
             path="/characters"
-            render={(props) => <Comics {...props} title="Characters" />}
+            render={(props) => <Items {...props} title="Characters" />}
           />
-          <Route exact path="/characters/:comicId" component={ComicPage} />
+          <Route exact path="/characters/:comicId" component={ItemDetails} />
         </Switch>
 
         <footer className="App__footer">
@@ -77,10 +80,7 @@ function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img
-              src="./images/logo-dextra-preta.png"
-              alt="Logo Dextra Rodapé"
-            />
+            <img src={logoDextraFooter} alt="Logo Dextra Rodapé" />
           </a>
         </footer>
       </div>

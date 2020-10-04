@@ -4,7 +4,7 @@ import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useToasts } from 'react-toast-notifications';
 import ReactTooltip from 'react-tooltip';
-import './comic.scss';
+import './Item.scss';
 
 type TThumbnail = {
   extension: string;
@@ -30,7 +30,7 @@ type TComicProps = {
   onSetIsShowOnlyFavorites(isShowOnlyFavorites: boolean): void;
 };
 
-export default function Comic({
+export function Item({
   favorites,
   isMobile,
   item,

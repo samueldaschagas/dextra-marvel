@@ -13,12 +13,13 @@ import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import api from '../api';
-import '../App.scss';
-import { PRIVATE_KEY, PUBLIC_KEY } from '../constants';
-import Comic from './comic';
-import { Container } from './container/container';
-import { PageHeader } from './page-header/page-header';
+import api from '../../../api';
+import { Container, PageHeader } from '../../../components';
+import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
+import './Items.scss';
+import charactersBanner from '../../../images/characters-banner.jpg';
+import comicsBanner from '../../../images/comics-banner.jpg';
+import { Item } from './Item';
 
 type TThumbnail = {
   extension: string;
@@ -38,11 +39,7 @@ type TComicsProps = RouteComponentProps & {
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-export default function Comics({
-  history,
-  title,
-  match: { path },
-}: TComicsProps) {
+export function Items({ history, title, match: { path } }: TComicsProps) {
   const { addToast } = useToasts();
   const [loadingItems, setLoadingItems] = useState(false);
   const [items, setItems] = useState<TComic[]>([]);
@@ -197,7 +194,7 @@ export default function Comics({
               : items
             ).map((item: TComic) => (
               <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
-                <Comic
+                <Item
                   item={item}
                   favorites={favorites}
                   onClick={handleItemClick}
@@ -235,7 +232,7 @@ export default function Comics({
     <>
       <div className="header__img-wrapper">
         <img
-          src={`./images/${itemType}-banner.jpg`}
+          src={isComics ? comicsBanner : charactersBanner}
           className="header__img-banner"
           alt={`${title} Banner`}
         />
@@ -303,7 +300,7 @@ export default function Comics({
                       inputSearchText.value = '';
                     }
                     setSearchText('');
-                    setSelectedFirstLetter('')
+                    setSelectedFirstLetter('');
 
                     if (isShowOnlyFavorites) {
                       fetchData();

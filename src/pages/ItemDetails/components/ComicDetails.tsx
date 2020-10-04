@@ -1,6 +1,6 @@
+import _ from 'lodash';
 import React from 'react';
 import { Col, Row } from 'react-grid-system';
-import _ from 'lodash';
 
 type TThumbnail = {
   extension: string;
