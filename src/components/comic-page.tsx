@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
 import api from '../api';
+import { PRIVATE_KEY, PUBLIC_KEY } from '../constants';
 import { CharacterDetails } from './character-details';
 import { ComicDetails } from './comic-details';
 import './comic-page.scss';
@@ -39,9 +40,6 @@ type TComicProps = RouteComponentProps<{ comicId: string }> & {
   item: TComic;
 };
 
-const PUBLIC_KEY = '4ee2cb620530c8a433645ce054a014cb';
-const PRIVATE_KEY = '3a391728aa873a351b28c250786cbb300cf6e303';
-
 export default function ComicPage({
   match: {
     path = '',
@@ -62,7 +60,7 @@ export default function ComicPage({
       try {
         const timestamp = Number(new Date());
         const hash = md5.create();
-        hash.update(timestamp + PRIVATE_KEY + PUBLIC_KEY);
+        hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
         const comicsUrl = `comics/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
         const charactersUrl = `characters/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
 

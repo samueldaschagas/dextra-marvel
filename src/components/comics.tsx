@@ -15,6 +15,7 @@ import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
 import api from '../api';
 import '../App.scss';
+import { PRIVATE_KEY, PUBLIC_KEY } from '../constants';
 import Comic from './comic';
 import { Container } from './container/container';
 import { PageHeader } from './page-header/page-header';
@@ -35,8 +36,6 @@ type TComicsProps = RouteComponentProps & {
   title: string;
 };
 
-const PUBLIC_KEY = '4ee2cb620530c8a433645ce054a014cb';
-const PRIVATE_KEY = '3a391728aa873a351b28c250786cbb300cf6e303';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function Comics({
@@ -81,7 +80,7 @@ export default function Comics({
     try {
       const timestamp = Number(new Date());
       const hash = md5.create();
-      hash.update(timestamp + PRIVATE_KEY + PUBLIC_KEY);
+      hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
 
       const comicsUrl = `comics?ts=${timestamp}&orderBy=title&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
         searchText ? `&titleStartsWith=${searchText}` : ''
