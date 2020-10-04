@@ -1,28 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import { Col, Row } from 'react-grid-system';
-
-type TThumbnail = {
-  extension: string;
-  path: string;
-};
-
-type TCreators = {
-  items: { name: string; role: string }[];
-};
-
-type TComic = {
-  description: string;
-  format: string;
-  isbn: string;
-  issn: string;
-  title?: string;
-  name?: string;
-  thumbnail: TThumbnail;
-  pageCount: number;
-  prices: { price: number }[];
-  creators: TCreators;
-};
+import { TComic } from 'pages/types';
 
 type TComicDetailsProps = {
   comic?: TComic;

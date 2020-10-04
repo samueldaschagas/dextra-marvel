@@ -1,40 +1,18 @@
+import api from 'api';
+import { Container } from 'components/Container';
+import { PageHeader } from 'components/PageHeader';
 import md5 from 'js-md5';
+import { TComic } from 'pages/types';
 import React, { useEffect, useState } from 'react';
 import { Col, Container as GridSystemContainer, Row } from 'react-grid-system';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import api from '../../../api';
-import { Container } from '../../../components/container/container';
-import { PageHeader } from '../../../components/page-header/page-header';
 import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
 import { CharacterDetails } from './CharacterDetails';
 import { ComicDetails } from './ComicDetails';
 import './ItemDetails.scss';
-
-type TThumbnail = {
-  extension: string;
-  path: string;
-};
-
-type TCreators = {
-  items: { name: string; role: string }[];
-};
-
-type TComic = {
-  description: string;
-  format: string;
-  isbn: string;
-  issn: string;
-  title?: string;
-  name?: string;
-  thumbnail: TThumbnail;
-  pageCount: number;
-  prices: { price: number }[];
-  creators: TCreators;
-  urls: { url: string; type: string }[];
-};
 
 type TComicProps = RouteComponentProps<{ comicId: string }> & {
   item: TComic;

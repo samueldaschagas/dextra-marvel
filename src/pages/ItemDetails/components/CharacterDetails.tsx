@@ -1,29 +1,7 @@
-import React from 'react';
 import _ from 'lodash';
+import { TComic } from 'pages/types';
+import React from 'react';
 import { AiOutlineLink } from 'react-icons/ai';
-
-type TThumbnail = {
-  extension: string;
-  path: string;
-};
-
-type TCreators = {
-  items: { name: string; role: string }[];
-};
-
-type TComic = {
-  description: string;
-  format: string;
-  isbn: string;
-  issn: string;
-  title?: string;
-  name?: string;
-  thumbnail: TThumbnail;
-  pageCount: number;
-  prices: { price: number }[];
-  creators: TCreators;
-  urls: { url: string; type: string }[];
-};
 
 type TComicDetailsProps = {
   comic?: TComic;

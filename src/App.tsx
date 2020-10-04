@@ -65,13 +65,16 @@ function App() {
             path="/comics"
             render={(props) => <Items {...props} title="Comics" />}
           />
-          <Route exact path="/comics/:comicId" component={ItemDetails} />
           <Route
             exact
             path="/characters"
             render={(props) => <Items {...props} title="Characters" />}
           />
-          <Route exact path="/characters/:comicId" component={ItemDetails} />
+          <Route
+            exact
+            path={['/comics/:comicId', '/characters/:comicId']}
+            component={ItemDetails}
+          />
         </Switch>
 
         <footer className="App__footer">

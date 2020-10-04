@@ -1,5 +1,5 @@
 import React from 'react';
-import './container.scss';
+import './Container.scss';
 
 type TContainerProps = {
   children: React.ReactNode;

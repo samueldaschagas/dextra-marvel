@@ -1,6 +1,6 @@
 import React from 'react';
-import { Container } from '../container';
-import './page-header.scss';
+import { Container } from '../Container';
+import './PageHeader.scss';
 
 type TPageHeaderProps = {
   title: string;

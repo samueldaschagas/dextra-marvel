@@ -1,5 +1,10 @@
+import api from 'api';
+import { Container, PageHeader } from 'components';
+import charactersBanner from 'images/characters-banner.jpg';
+import comicsBanner from 'images/comics-banner.jpg';
 import md5 from 'js-md5';
 import _ from 'lodash';
+import { TComic } from 'pages/types';
 import React, { useEffect, useState } from 'react';
 import {
   Col,
@@ -13,25 +18,9 @@ import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import api from '../../../api';
-import { Container, PageHeader } from '../../../components';
 import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
-import './Items.scss';
-import charactersBanner from '../../../images/characters-banner.jpg';
-import comicsBanner from '../../../images/comics-banner.jpg';
 import { Item } from './Item';
-
-type TThumbnail = {
-  extension: string;
-  path: string;
-};
-
-type TComic = {
-  id: number;
-  title: string;
-  thumbnail: TThumbnail;
-  favoritedSince: Date;
-};
+import './Items.scss';
 
 type TComicsProps = RouteComponentProps & {
   title: string;

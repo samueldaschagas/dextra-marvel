@@ -1,25 +1,14 @@
 import { formatDistance } from 'date-fns';
 import _ from 'lodash';
+import { TComic } from 'pages/types';
 import React from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useToasts } from 'react-toast-notifications';
 import ReactTooltip from 'react-tooltip';
 import './Item.scss';
 
-type TThumbnail = {
-  extension: string;
-  path: string;
-};
-
-type TComic = {
-  id: number;
-  title?: string;
-  name?: string;
-  thumbnail: TThumbnail;
-};
-
 type TComicProps = {
-  favorites: (TComic & { favoritedSince: Date })[];
+  favorites: TComic[];
   isMobile: boolean;
   item: TComic & { favoritedSince: Date };
   itemType: string;
