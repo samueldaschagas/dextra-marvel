@@ -8,7 +8,11 @@ type TContainerProps = {
 
 export function Container({ children, removePadding }: TContainerProps) {
   return (
-    <div className="container" style={removePadding ? { padding: 0 } : {}}>
+    <div
+      className="container"
+      data-testid="container"
+      style={removePadding ? { padding: 0 } : {}}
+    >
       {children}
     </div>
   );

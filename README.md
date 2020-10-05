@@ -64,3 +64,8 @@ A compilação é reduzida e os nomes dos arquivos incluem os hashes.<br />
 Seu aplicativo está pronto para ser implantado!
 
 Consulte a seção sobre [implantação Create React App](https://facebook.github.io/create-react-app/docs/deployment) para obter mais informações.
+
+### Executando testes
+
+Executa o comando `yarn test`. Inicia o executor de teste no modo de observação (watch).<br />
+Veja a seção sobre [running tests](https://facebook.github.io/create-react-app/docs/running-tests) para mais informações.

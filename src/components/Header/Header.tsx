@@ -19,7 +19,7 @@ export function Header() {
   const isMobile = ['xs', 'sm'].includes(screenClass);
 
   return (
-    <header className="header">
+    <header className="header" data-testid="header">
       <Container removePadding>
         <nav className="header__nav">
           <NavLink
