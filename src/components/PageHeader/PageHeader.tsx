@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container } from '../Container';
 import './PageHeader.scss';
 
 type TPageHeaderProps = {
@@ -8,9 +7,9 @@ type TPageHeaderProps = {
 
 export function PageHeader({ title }: TPageHeaderProps) {
   return (
-    <Container>
+    <div className="pageheader">
       <h2 className="pageheader__title">{title}</h2>
       <hr className="pageheader__divider" />
-    </Container>
+    </div>
   );
 }

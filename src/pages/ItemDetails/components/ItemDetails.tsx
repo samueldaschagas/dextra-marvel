@@ -53,7 +53,7 @@ export function ItemDetails({
             data: { results },
           },
         } = await api.get(isComics ? comicsUrl : charactersUrl);
-        
+
         setItem(results[0]);
       } catch (error) {
         addToast(error.message, { appearance: 'error' });
@@ -70,12 +70,12 @@ export function ItemDetails({
     <>
       {loadingItem && <BarLoader width="100%" height={4} color="#ef4f21" />}
       <Container>
-        <div className="item-details__to-back">
+        <div className="item-details__header">
           <Link to={`/${itemType}`}>
             <AiOutlineArrowLeft style={{ margin: '0 3px -3px 0' }} /> To Back
           </Link>
+          <PageHeader title={(item || {})[isComics ? 'title' : 'name']!} />
         </div>
-        <PageHeader title={(item || {})[isComics ? 'title' : 'name']!} />
         {!loadingItem && (
           <GridSystemContainer>
             <Row>

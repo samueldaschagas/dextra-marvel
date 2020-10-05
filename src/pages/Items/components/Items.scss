@@ -148,7 +148,7 @@ table {
   }
 
   &__actions-bar {
-    margin: 0 0 20px 10px;
+    margin-bottom: 10px;
     justify-content: space-between;
     display: flex;
   }
@@ -284,7 +284,6 @@ table {
 }
 
 .items__filter-first-letter {
-  padding-left: 15px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
@@ -310,6 +309,10 @@ table {
   font-weight: 900;
 }
 
+.items__filter-first-letter__results {
+  font-style: italic;
+}
+
 @media (max-width: 992px) {
   .items__actions-bar {
     display: block;
@@ -324,5 +327,18 @@ table {
 @media (min-width: 992px) {
   .items__actions-bar .btn {
     margin-left: -10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .items__filter-first-letter {
+    display: block;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .items__filter-first-letter__results {
+    text-align: center;
+    margin: 30px 0;
   }
 }

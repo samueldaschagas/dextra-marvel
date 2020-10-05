@@ -43,8 +43,8 @@ export function ComicDetails({ comic }: TComicDetailsProps) {
           <strong>Creators:</strong>
           <Row>
             {!_.isEmpty(comicCreators) ? (
-              comicCreators.map((c: TCreatorsItem) => (
-                <Col sm={4} className="comic-details__col">
+              comicCreators.map((c: TCreatorsItem, index: string) => (
+                <Col sm={4} className="comic-details__col" key={index}>
                   <div>{c.name}</div>
                   <div className="comic-details__rule">{c.role}</div>
                 </Col>

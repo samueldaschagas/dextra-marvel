@@ -1,11 +1,11 @@
 .item-details {
-  &__to-back {
-    padding: 0 25px;
-  }
+  &__header {
+    padding: 0 15px;
 
-  &__img {
-    float: left;
-    margin-left: 10px;
+    a {
+      display: inline-block;
+      margin-bottom: 10px;
+    }
   }
 }
 
@@ -17,7 +17,7 @@
 }
 
 @media (max-width: 768px) {
-  .item-details__to-back {
+  .item-details__header {
     margin-top: 68px;
   }
 }

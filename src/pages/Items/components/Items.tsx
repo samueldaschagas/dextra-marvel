@@ -338,17 +338,15 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
         <hr />
         <div className="items__filter-first-letter">
           {loadingItems ? (
-            'Loading...'
+            <div className="items__filter-first-letter__results">
+              Loading...
+            </div>
           ) : !total || (isShowOnlyFavorites && _.isEmpty(favorites)) ? (
-            <div
-              style={{
-                fontStyle: 'italic',
-              }}
-            >
+            <div className="items__filter-first-letter__results">
               No {isShowOnlyFavorites ? 'favorites' : 'results'} found.
             </div>
           ) : (
-            <div>
+            <div className="items__filter-first-letter__results">
               <strong>{isShowOnlyFavorites ? favorites.length : total}</strong>{' '}
               {isShowOnlyFavorites ? 'favorites' : 'results'} found
             </div>
