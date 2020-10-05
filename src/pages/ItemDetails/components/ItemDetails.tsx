@@ -1,7 +1,6 @@
-import api from 'api';
+import * as Api from 'api';
 import { Container } from 'components/Container';
 import { PageHeader } from 'components/PageHeader';
-import md5 from 'js-md5';
 import { TComicCharacter } from 'pages/types';
 import React, { useEffect, useState } from 'react';
 import { Col, Container as GridSystemContainer, Row } from 'react-grid-system';
@@ -9,7 +8,6 @@ import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
 import { CharacterDetails } from './CharacterDetails';
 import { ComicDetails } from './ComicDetails';
 import './ItemDetails.scss';
@@ -42,17 +40,12 @@ export function ItemDetails({
     async function fetchItem() {
       setLoadingItem(true);
       try {
-        const timestamp = Number(new Date());
-        const hash = md5.create();
-        hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
-        const comicsUrl = `comics/${itemId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
-        const charactersUrl = `characters/${itemId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
-
+        const apiFetch = isComics ? Api.fetchComicById : Api.fetchCharacterById;
         const {
           data: {
             data: { results },
           },
-        } = await api.get(isComics ? comicsUrl : charactersUrl);
+        } = await apiFetch(itemId);
 
         setItem(results[0]);
       } catch (error) {

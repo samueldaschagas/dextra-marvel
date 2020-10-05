@@ -1,8 +1,7 @@
-import api from 'api';
+import * as Api from 'api';
 import { Container, PageHeader } from 'components';
 import charactersBanner from 'images/characters-banner.jpg';
 import comicsBanner from 'images/comics-banner.jpg';
-import md5 from 'js-md5';
 import _ from 'lodash';
 import { TComicCharacter } from 'pages/types';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +11,6 @@ import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
-import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
 import ItemCard from './ItemCard';
 import './Items.scss';
 import LetterFilter from './LetterFilter';
@@ -47,27 +45,14 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
   async function fetchItems(searchText?: string, selectedOffSet?: number) {
     setLoadingItems(true);
     try {
-      const timestamp = Number(new Date());
-      const hash = md5.create();
-      hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
+      const apiFetch = isComics ? Api.fetchComics : Api.fetchCharacters;
+      const result = await apiFetch({
+        offset: selectedOffSet || offSet,
+        searchText,
+      });
 
-      const comicsUrl = `comics?ts=${timestamp}&orderBy=title&offset=${
-        selectedOffSet || offSet
-      }&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
-        searchText ? `&titleStartsWith=${searchText}` : ''
-      );
-      const charactersUrl = `characters?ts=${timestamp}&orderBy=name&offset=${
-        selectedOffSet || offSet
-      }&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
-        searchText ? `&nameStartsWith=${searchText}` : ''
-      );
-
-      const {
-        data: {
-          data: { results, total },
-        },
-      } = await api.get(isComics ? comicsUrl : charactersUrl);
-
+      // A partir do resultado retornado, pega lista de itens e total para atualizar state
+      const { results, total } = _.get(result, 'data.data');
       setItems(results);
       setTotal(total);
 

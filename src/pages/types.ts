@@ -46,5 +46,10 @@ export type TCharacter = {
 
 export type TComicCharacter = TComic & TCharacter;
 
+export type FetchItemsPars = {
+  offset: number;
+  searchText?: string;
+};
+
 
 

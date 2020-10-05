@@ -6,15 +6,15 @@ import './index.scss';
 import * as serviceWorker from './serviceWorker';
 
 /**
- * Renderiza App em div com id 'root', 
+ * Renderiza App em div com id 'root',
  * utilizando ToastProvider para permitir o uso de notificações nos componentes.
  */
 ReactDOM.render(
-  <React.StrictMode>
-    <ToastProvider placement="bottom-right" autoDismiss>
+  <ToastProvider placement="bottom-right" autoDismiss>
+    <React.StrictMode>
       <App />
-    </ToastProvider>
-  </React.StrictMode>,
+    </React.StrictMode>
+  </ToastProvider>,
   document.getElementById('root')
 );
 
