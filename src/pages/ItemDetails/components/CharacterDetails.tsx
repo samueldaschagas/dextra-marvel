@@ -1,31 +1,35 @@
 import _ from 'lodash';
-import { TComic } from 'pages/types';
+import { TComicCharacter } from 'pages/types';
 import React from 'react';
 import { AiOutlineLink } from 'react-icons/ai';
+import './CharacterDetails.scss';
 
-type TComicDetailsProps = {
-  comic?: TComic;
+type TCharacterDetailsProps = {
+  character?: TComicCharacter;
 };
 
-export function CharacterDetails({ comic }: TComicDetailsProps) {
+/**
+ * Componente responsável pela exibição dos detalhes de um personagem.
+ */
+export function CharacterDetails({ character }: TCharacterDetailsProps) {
+  // Armazena na constante 'detailUrl' apenas url do tipo 'detail' para ser utilizada em link 'More Details'
   const detailUrl =
-    _.get(comic, 'urls.0.type') === 'detail' && _.get(comic, 'urls.0.url');
+    _.get(character, 'urls.0.type') === 'detail' &&
+    _.get(character, 'urls.0.url');
 
   return (
     <>
-      <p style={{ textAlign: 'justify' }}>
-        {comic?.description || (
-          <em style={{ fontStyle: 'italic' }}>No description</em>
-        )}
+      <p className="character-details__description">
+        {character?.description || <em>No description</em>}
       </p>
       {detailUrl && (
         <a
+          className="character-details__detail-url"
           href={detailUrl}
-          style={{ float: 'left', marginTop: '20px' }}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <AiOutlineLink style={{ margin: '0 3px -3px 0' }} />
+          <AiOutlineLink className="character-details__icon-link" />
           More Details
         </a>
       )}

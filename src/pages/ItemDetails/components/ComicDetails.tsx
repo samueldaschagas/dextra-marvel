@@ -1,35 +1,40 @@
 import _ from 'lodash';
+import { TComic, TCreatorsItem } from 'pages/types';
 import React from 'react';
 import { Col, Row } from 'react-grid-system';
-import { TComic } from 'pages/types';
+import './ComicDetails.scss';
 
 type TComicDetailsProps = {
   comic?: TComic;
 };
 
+/**
+ * Componente responsável pela exibição dos detalhes de um quadrinho.
+ */
 export function ComicDetails({ comic }: TComicDetailsProps) {
+  const comicCreators = _.get(comic, 'creators.items') || [];
+  const comicPrice = _.get(comic, 'prices.0.price');
+
   return (
     <>
-      <ul className="comic-page__details">
-        <li className="comic-page__details__description">
-          {comic?.description}
-        </li>
+      <ul className="comic-details">
+        <li>{comic?.description}</li>
         <li>
           <Row>
-            <Col sm={4} className="comic-page__details__creator">
+            <Col sm={4} className="comic-details__col">
               <strong>Pages number:</strong> {comic?.pageCount || '--'}
             </Col>
-            <Col sm={8} className="comic-page__details__creator">
+            <Col sm={8} className="comic-details__col">
               <strong>Format:</strong> {comic?.format || '--'}
             </Col>
           </Row>
         </li>
         <li>
           <Row>
-            <Col sm={4} className="comic-page__details__creator">
+            <Col sm={4} className="comic-details__col">
               <strong>ISBN:</strong> {comic?.isbn || '--'}
             </Col>
-            <Col sm={8} className="comic-page__details__creator">
+            <Col sm={8} className="comic-details__col">
               <strong>ISSN:</strong> {comic?.issn || '--'}
             </Col>
           </Row>
@@ -37,11 +42,11 @@ export function ComicDetails({ comic }: TComicDetailsProps) {
         <li>
           <strong>Creators:</strong>
           <Row>
-            {comic?.creators.items.length! > 0 ? (
-              comic?.creators.items.map((c) => (
-                <Col sm={4} className="comic-page__details__creator">
+            {!_.isEmpty(comicCreators) ? (
+              comicCreators.map((c: TCreatorsItem) => (
+                <Col sm={4} className="comic-details__col">
                   <div>{c.name}</div>
-                  <div className="comic-page__details__rule">{c.role}</div>
+                  <div className="comic-details__rule">{c.role}</div>
                 </Col>
               ))
             ) : (
@@ -50,10 +55,8 @@ export function ComicDetails({ comic }: TComicDetailsProps) {
           </Row>
         </li>
       </ul>
-      <div className="comic-page__details__price">
-        {_.get(comic, 'prices.0.price')
-          ? `$${_.get(comic, 'prices.0.price')}`
-          : 'Value Unavailable'}
+      <div className="comic-details__price">
+        {comicPrice ? `$${comicPrice}` : 'Value Unavailable'}
       </div>
     </>
   );

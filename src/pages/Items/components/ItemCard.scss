@@ -1,4 +1,4 @@
-.comic {
+.item-card {
   width: 250px;
   float: left;
   margin: 10px;
@@ -8,16 +8,26 @@
   -moz-box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
 
-  img {
-    cursor: pointer;
+  &:hover {
+    -webkit-box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
+    -moz-box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
+    box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
   }
 
-  .comic__details {
+  img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+  }
+  
+  &__info {
     padding: 10px;
     width: 100%;
   }
 
-  .comic__details__name {
+  &__info__name {
     font-weight: 900;
     height: 50px;
     overflow: hidden;
@@ -27,13 +37,13 @@
     -webkit-box-orient: vertical;
   }
 
-  .comic__details__footer {
+  &__info__footer {
     margin-top: 10px;
     display: flex;
     justify-content: space-between;
   }
 
-  .comic__details__favorited-since {
+  &__info__favorited-since {
     font-size: 12px;
     display: flex;
     align-items: flex-end;
@@ -41,32 +51,20 @@
     font-style: italic;
   }
 
-  .comic__details__favorite-icon {
+  &__info__favorite-icon {
     font-size: 30px;
     cursor: pointer;
   }
 
-  .comic__details__remove-favorite-icon {
-    @extend .comic__details__favorite-icon;
+  &__info__remove-favorite-icon {
+    @extend .item-card__info__favorite-icon;
+    
     color: #ef4f21;
   }
 }
 
-.comic:hover {
-  -webkit-box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
-  -moz-box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
-  box-shadow: 0px 0px 25px -6px rgba(0, 0, 0, 0.75) !important;
-}
-
-.comic img {
-  width: 250px;
-  height: 250px;
-  object-fit: cover;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.comic-mobile {
-  @extend .comic;
+.item-card-mobile {
+  @extend .item-card;
   
   box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
   cursor: pointer;
@@ -79,12 +77,12 @@
     height: auto;
   }
 
-  .comic__details {
+  .item-card__info {
     padding: 10px;
     width: 100%;
   }
 
-  .comic__details__name {
+  .item-card__info__name {
     font-weight: 900;
     height: 50px;
     overflow: hidden;
@@ -93,7 +91,7 @@
     -webkit-box-orient: vertical;
   }
 
-  .comic__details__footer {
+  .item-card__info__footer {
     text-align: right;
     width: auto;
     margin-top: 10px;

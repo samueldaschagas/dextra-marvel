@@ -2,7 +2,7 @@ import api from 'api';
 import { Container } from 'components/Container';
 import { PageHeader } from 'components/PageHeader';
 import md5 from 'js-md5';
-import { TComic } from 'pages/types';
+import { TComicCharacter } from 'pages/types';
 import React, { useEffect, useState } from 'react';
 import { Col, Container as GridSystemContainer, Row } from 'react-grid-system';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
@@ -14,76 +14,83 @@ import { CharacterDetails } from './CharacterDetails';
 import { ComicDetails } from './ComicDetails';
 import './ItemDetails.scss';
 
-type TComicProps = RouteComponentProps<{ comicId: string }> & {
-  item: TComic;
+type TItemDetailsProps = RouteComponentProps<{ itemId: string }> & {
+  item: TComicCharacter;
 };
 
+/**
+ * Componente responsável pela consulta dos detalhes de um quadrinho ou de um personagem,
+ * e por exibir layout com colunas de imagem do item e componente de detalhes.
+ */
 export function ItemDetails({
   match: {
     path = '',
-    params: { comicId },
+    params: { itemId },
   },
-}: TComicProps) {
-  const { addToast } = useToasts();
-  const [loadingComic, setLoadingComic] = useState(false);
-  const [comic, setComic] = useState<TComic>();
+}: TItemDetailsProps) {
+  // Define se o tipo de item é um quadrinho ou um personagem a partir da rota chamada
   var re = new RegExp('/', 'g');
   const replacedPath = path.replace(re, '').split(':');
   const itemType = replacedPath[0];
   const isComics = itemType === 'comics';
 
+  const { addToast } = useToasts();
+  const [loadingItem, setLoadingItem] = useState(false);
+  const [item, setItem] = useState<TComicCharacter>();
+
   useEffect(() => {
-    async function fetchComic() {
-      setLoadingComic(true);
+    async function fetchItem() {
+      setLoadingItem(true);
       try {
         const timestamp = Number(new Date());
         const hash = md5.create();
         hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
-        const comicsUrl = `comics/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
-        const charactersUrl = `characters/${comicId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
+        const comicsUrl = `comics/${itemId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
+        const charactersUrl = `characters/${itemId}?ts=${timestamp}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`;
 
         const {
           data: {
             data: { results },
           },
         } = await api.get(isComics ? comicsUrl : charactersUrl);
-        setComic(results[0]);
+        
+        setItem(results[0]);
       } catch (error) {
         addToast(error.message, { appearance: 'error' });
       } finally {
-        setLoadingComic(false);
+        setLoadingItem(false);
       }
     }
 
-    fetchComic();
+    fetchItem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      {loadingComic && <BarLoader width="100%" height={4} color="#ef4f21" />}
+      {loadingItem && <BarLoader width="100%" height={4} color="#ef4f21" />}
       <Container>
-        <div className="comic-page__to-back">
+        <div className="item-details__to-back">
           <Link to={`/${itemType}`}>
             <AiOutlineArrowLeft style={{ margin: '0 3px -3px 0' }} /> To Back
           </Link>
         </div>
-        <PageHeader title={(comic || {})[isComics ? 'title' : 'name']!} />
-        {!loadingComic && (
+        <PageHeader title={(item || {})[isComics ? 'title' : 'name']!} />
+        {!loadingItem && (
           <GridSystemContainer>
             <Row>
               <Col xl={4} lg={6} sm={12}>
                 <img
-                  className="comic-page__img"
-                  src={`${comic?.thumbnail.path}/portrait_uncanny.${comic?.thumbnail.extension}`}
-                  alt={`${comic?.title}`}
+                  className="item-details__img"
+                  src={`${item?.thumbnail.path}/portrait_uncanny.${item?.thumbnail.extension}`}
+                  alt={`${item?.title}`}
                 />
               </Col>
               <Col xl={8} lg={6} sm={12}>
                 {isComics ? (
-                  <ComicDetails comic={comic} />
+                  <ComicDetails comic={item} />
                 ) : (
-                  <CharacterDetails comic={comic} />
+                  <CharacterDetails character={item} />
                 )}
               </Col>
             </Row>

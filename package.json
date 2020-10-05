@@ -10,7 +10,6 @@
     "date-fns": "^2.16.1",
     "js-md5": "^0.7.3",
     "lodash": "^4.17.20",
-    "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-grid-system": "^7.1.1",
@@ -23,6 +22,20 @@
     "react-toast-notifications": "^2.4.0",
     "react-tooltip": "^4.2.10",
     "typescript": "~3.7.2"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "@types/date-fns": "^2.6.0",
+    "@types/jest": "^24.0.0",
+    "@types/js-md5": "^0.4.2",
+    "@types/lodash": "^4.14.161",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-paginate": "^6.2.1",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/react-toast-notifications": "^2.4.0",
+    "@types/react-tooltip": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -44,18 +57,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/date-fns": "^2.6.0",
-    "@types/jest": "^24.0.0",
-    "@types/js-md5": "^0.4.2",
-    "@types/lodash": "^4.14.161",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
-    "@types/react-paginate": "^6.2.1",
-    "@types/react-router-dom": "^5.1.5",
-    "@types/react-toast-notifications": "^2.4.0",
-    "@types/react-tooltip": "^4.2.4"
   }
 }

@@ -4,43 +4,44 @@ import charactersBanner from 'images/characters-banner.jpg';
 import comicsBanner from 'images/comics-banner.jpg';
 import md5 from 'js-md5';
 import _ from 'lodash';
-import { TComic } from 'pages/types';
+import { TComicCharacter } from 'pages/types';
 import React, { useEffect, useState } from 'react';
-import {
-  Col,
-  Container as GridSystemContainer,
-  Row,
-  useScreenClass,
-  Visible,
-} from 'react-grid-system';
+import { Col, Row, useScreenClass } from 'react-grid-system';
 import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
 import ReactPaginate from 'react-paginate';
 import { RouteComponentProps } from 'react-router-dom';
 import { BarLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
 import { PRIVATE_KEY, PUBLIC_KEY } from '../../../constants';
-import { Item } from './Item';
+import ItemCard from './ItemCard';
 import './Items.scss';
+import LetterFilter from './LetterFilter';
 
 type TComicsProps = RouteComponentProps & {
   title: string;
 };
 
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const MAX_ITEMS_PER_PAGE = 20;
 
+/**
+ * Componente responsável pela listagem principal de cards com os itens (Quadrinhos ou Personagens).
+ */
 export function Items({ history, title, match: { path } }: TComicsProps) {
   const { addToast } = useToasts();
-  const [loadingItems, setLoadingItems] = useState(false);
-  const [items, setItems] = useState<TComic[]>([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [selectedPage, setSelectedPage] = useState(0);
-  const [searchText, setSearchText] = useState('');
-  const [offSet, setOffSet] = useState(0);
   const itemType = path.replace('/', '');
   const isComics = itemType === 'comics';
   const LOCAL_STORAGE_KEY = `@dextra-marvel/favorites-${
     isComics ? 'comics' : 'characters'
   }`;
+
+  const [loadingItems, setLoadingItems] = useState(false);
+  const [items, setItems] = useState<TComicCharacter[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(0);
+  const [searchText, setSearchText] = useState('');
+  const [offSet, setOffSet] = useState(0);
+  const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
 
   useEffect(() => {
     setOffSet(0);
@@ -49,19 +50,13 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
       JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]')
     );
     setIsShowOnlyFavorites(false);
-    const inputSearchText = document.getElementById(
-      'searchText'
-    ) as HTMLInputElement;
-
-    if (inputSearchText) {
-      inputSearchText.value = '';
-    }
-    setSearchText('');
-    fetchData();
+    clearSearchInput();
+    setSelectedFilterLetter('');
+    fetchItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemType]);
 
-  async function fetchData(searchText?: string) {
+  async function fetchItems(searchText?: string) {
     setLoadingItems(true);
     try {
       const timestamp = Number(new Date());
@@ -80,10 +75,12 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
           data: { results, total },
         },
       } = await api.get(isComics ? comicsUrl : charactersUrl);
+
       setItems(results);
+      setTotal(total);
 
       if (total > 0) {
-        const totalPages = total / 20; // TODO: Criar constante
+        const totalPages = total / MAX_ITEMS_PER_PAGE;
         setTotalPages(totalPages);
       }
     } catch (error) {
@@ -93,16 +90,17 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     }
   }
 
+  // Recarrega itens quando página é alterada, considerando filtro por letra ou texto buscado
   useEffect(() => {
-    fetchData(selectedFirstLetter || searchText);
+    fetchItems(selectedFilterLetter || searchText);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offSet]);
 
-  function handlePageClick(data: { selected: number }) {
+  // Ao clicar em botões da paginação, atualiza state com a página selecionada e offset
+  function handlePageClick({ selected }: { selected: number }) {
     window.scrollTo(0, 0);
 
-    const selected = data.selected;
-    const selectedOffSet = Math.ceil(selected * 20);
+    const selectedOffSet = Math.ceil(selected * MAX_ITEMS_PER_PAGE);
 
     setSelectedPage(selected);
     setOffSet(selectedOffSet);
@@ -126,45 +124,66 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
   }
 
   function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
+    /**
+     * Utiliza preventDefault para evitar o recarregamento da página
+     * ao apertar a tecla Enter para submeter formulário
+     * */
     e.preventDefault();
-    e.stopPropagation();
 
+    // Reinicia states offSet, selectedPage, selectedFilterLetter e isShowOnlyFavorites
     setOffSet(0);
     setSelectedPage(0);
-    setSelectedFirstLetter('');
+    setSelectedFilterLetter('');
     setIsShowOnlyFavorites(false);
-    fetchData(searchText);
+
+    // Chama função para buscar dados a partir do texto digitado
+    fetchItems(searchText);
   }
 
+  // Redireciona para pagina de detalhes do item
   function handleItemClick(id: number) {
     history.push(`/${itemType}/${id}`);
   }
 
-  const [selectedFirstLetter, setSelectedFirstLetter] = useState('');
+  // Limpa campo de busca
+  function clearSearchInput() {
+    const searchInputText = document.getElementById(
+      'searchText'
+    ) as HTMLInputElement;
 
-  function handleFilterByLetter(e: React.ChangeEvent<HTMLSelectElement>) {
+    if (searchInputText) {
+      searchInputText.value = '';
+    }
+    setSearchText('');
+  }
+
+  // Limpa filtro por letra
+  function clearFilterLetter() {
+    setOffSet(0);
+    setSelectedPage(0);
+    setSelectedFilterLetter('');
+    fetchItems();
+  }
+
+  const [selectedFilterLetter, setSelectedFilterLetter] = useState('');
+
+  function handleFilterLetterChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const letter = e.target.value;
 
-    if (letter !== selectedFirstLetter) {
+    if (letter !== selectedFilterLetter) {
+      // Reinicia states offSet, selectedPage e isShowOnlyFavorites; e limpa campo de busca
       setOffSet(0);
       setSelectedPage(0);
       setIsShowOnlyFavorites(false);
-      const inputSearchText = document.getElementById(
-        'searchText'
-      ) as HTMLInputElement;
+      clearSearchInput();
 
-      if (inputSearchText) {
-        inputSearchText.value = '';
-      }
-      setSearchText('');
-      setSelectedFirstLetter(letter);
-      fetchData(letter);
+      // Atualiza state e busca dados que iniciam com a letra escolhida
+      setSelectedFilterLetter(letter);
+      fetchItems(letter);
     }
   }
-
   const screenClass = useScreenClass();
   const isMobile = ['xs', 'sm', 'md'].includes(screenClass);
-  const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
   const [showTooltips, setShowTooltips] = useState(true);
 
   useEffect(() => {
@@ -173,66 +192,66 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     }
   }, [showTooltips]);
 
+  // Renderiza itens favoritados ou itens encontrados após resultado da consulta
   function renderItems() {
     return (
-      <GridSystemContainer>
+      <>
         <Row>
           {!loadingItems &&
-            (isShowOnlyFavorites && !_.isEmpty(favorites)
-              ? favorites
-              : items
-            ).map((item: TComic) => (
-              <Col className="comics__col" xl={3} lg={4} md={6} key={item.id}>
-                <Item
-                  item={item}
-                  favorites={favorites}
-                  onClick={handleItemClick}
-                  onSetFavorites={setFavorites}
-                  onSetIsShowOnlyFavorites={setIsShowOnlyFavorites}
-                  itemType={itemType}
-                  isMobile={isMobile}
-                  showTooltips={showTooltips}
-                  onSetShowTooltips={setShowTooltips}
-                />
-              </Col>
-            ))}
-          {items.length === 0 && !loadingItems && 'No results found'}
+            (isShowOnlyFavorites ? favorites : items).map(
+              (item: TComicCharacter) => (
+                <Col className="items__col" xl={3} lg={4} md={6} key={item.id}>
+                  <ItemCard
+                    item={item}
+                    favorites={favorites}
+                    onClick={handleItemClick}
+                    onSetFavorites={setFavorites}
+                    itemType={itemType}
+                    isMobile={isMobile}
+                    showTooltips={showTooltips}
+                    onSetShowTooltips={setShowTooltips}
+                  />
+                </Col>
+              )
+            )}
         </Row>
-        {items.length > 0 && !isShowOnlyFavorites && (
-          <ReactPaginate
-            previousLabel="Previous"
-            nextLabel="Next"
-            breakLabel="..."
-            breakClassName="break-me"
-            pageCount={totalPages}
-            forcePage={selectedPage}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName="pagination"
-            activeClassName="active"
-          />
+        {!_.isEmpty(items) && !isShowOnlyFavorites && (
+          <div style={{ textAlign: 'center' }}>
+            <ReactPaginate
+              previousLabel="Previous"
+              nextLabel="Next"
+              breakLabel="..."
+              breakClassName="break-me"
+              pageCount={totalPages}
+              forcePage={selectedPage}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+            />
+          </div>
         )}
-      </GridSystemContainer>
+      </>
     );
   }
 
   return (
     <>
-      <div className="header__img-wrapper">
+      <header className="items__img-wrapper">
         <img
           src={isComics ? comicsBanner : charactersBanner}
-          className="header__img-banner"
+          className="items__img-banner"
           alt={`${title} Banner`}
         />
-      </div>
+      </header>
       {loadingItems && <BarLoader width="100%" height={4} color="#ef4f21" />}
       <Container>
         <PageHeader title={title} />
-        <div className="comics__actions-bar">
+        <div className="items__actions-bar">
           <form
             className={
-              isMobile ? 'comics__mobile-search-form' : 'comics__search-form'
+              isMobile ? 'items__search-form--is-mobile' : 'items__search-form'
             }
             onSubmit={handleSearchSubmit}
           >
@@ -245,19 +264,12 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
               <AiOutlineClose
                 className={
                   isMobile
-                    ? 'comics__mobile-search-form-close-icon'
-                    : 'comics__search-form-close-icon'
+                    ? 'items__close-icon--is-mobile'
+                    : 'items__close-icon'
                 }
                 onClick={() => {
-                  const inputSearchText = document.getElementById(
-                    'searchText'
-                  ) as HTMLInputElement;
-
-                  if (inputSearchText) {
-                    inputSearchText.value = '';
-                  }
-                  setSearchText('');
-                  fetchData();
+                  clearSearchInput();
+                  fetchItems();
                   setOffSet(0);
                 }}
               />
@@ -265,8 +277,8 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
               <AiOutlineSearch
                 className={
                   isMobile
-                    ? 'comics__mobile-search-form-search-icon'
-                    : 'comics__search-form-search-icon'
+                    ? 'items__search-icon--is-mobile'
+                    : 'items__search-icon'
                 }
               />
             )}
@@ -274,28 +286,20 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
               Search
             </button>
           </form>
-          <div className="comics__more-actions">
+          <div className="items__more-actions">
             <Row>
               <Col>
                 <button
                   className="btn"
                   onClick={() => {
                     setIsShowOnlyFavorites(!isShowOnlyFavorites);
-                    const inputSearchText = document.getElementById(
-                      'searchText'
-                    ) as HTMLInputElement;
-
-                    if (inputSearchText) {
-                      inputSearchText.value = '';
-                    }
-                    setSearchText('');
-                    setSelectedFirstLetter('');
+                    clearSearchInput();
+                    setSelectedFilterLetter('');
 
                     if (isShowOnlyFavorites) {
-                      fetchData();
+                      fetchItems();
                     }
                   }}
-                  disabled={_.isEmpty(favorites)}
                 >
                   {isShowOnlyFavorites
                     ? 'Show All'
@@ -329,34 +333,31 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
                 </button>
               </Col>
             </Row>
-            <Visible md sm xs>
-              <hr />
-            </Visible>
           </div>
         </div>
-        <div className="comics__filter-first-letter">
-          <label>Filter by letter: </label>
-          <select
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              handleFilterByLetter(e)
-            }
-            value={selectedFirstLetter}
-          >
-            <option value="">All</option>
-            {ALPHABET.map((letter) => (
-              <option value={letter}>{letter}</option>
-            ))}
-          </select>
-          <button
-            className="btn btn-clear"
-            onClick={() => {
-              setSelectedFirstLetter('');
-              fetchData();
-            }}
-            disabled={!selectedFirstLetter}
-          >
-            Clear
-          </button>
+        <hr />
+        <div className="items__filter-first-letter">
+          {loadingItems ? (
+            'Loading...'
+          ) : !total || (isShowOnlyFavorites && _.isEmpty(favorites)) ? (
+            <div
+              style={{
+                fontStyle: 'italic',
+              }}
+            >
+              No {isShowOnlyFavorites ? 'favorites' : 'results'} found.
+            </div>
+          ) : (
+            <div>
+              <strong>{isShowOnlyFavorites ? favorites.length : total}</strong>{' '}
+              {isShowOnlyFavorites ? 'favorites' : 'results'} found
+            </div>
+          )}
+          <LetterFilter
+            onChange={handleFilterLetterChange}
+            onClearClick={clearFilterLetter}
+            selectedFilterLetter={selectedFilterLetter}
+          />
         </div>
         {renderItems()}
       </Container>

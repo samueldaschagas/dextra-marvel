@@ -1,4 +1,5 @@
-type TCreatorsItem = {
+// Define tipos que são utilizados nos componentes em /pages
+export type TCreatorsItem = {
   name: string;
   role: string;
 };
@@ -23,16 +24,27 @@ type TUrl = {
 
 export type TComic = {
   creators: TCreators;
-  description: string;
+  description: string; 
   favoritedSince: Date;
   format: string;
   id: number;
   isbn: string;
   issn: string;
-  name: string;
   pageCount: number;
   prices: TPrice[];
   thumbnail: TThumbnail;
   title: string;
-  urls: TUrl[];
 };
+
+export type TCharacter = {
+  description: string; 
+  id: number;
+  name: string;
+  thumbnail: TThumbnail;
+  urls: TUrl[];
+} 
+
+export type TComicCharacter = TComic & TCharacter;
+
+
+

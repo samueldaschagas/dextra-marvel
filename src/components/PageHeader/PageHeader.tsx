@@ -9,8 +9,8 @@ type TPageHeaderProps = {
 export function PageHeader({ title }: TPageHeaderProps) {
   return (
     <Container>
-      <h2 className="title">{title}</h2>
-      <hr className="divider" />
+      <h2 className="pageheader__title">{title}</h2>
+      <hr className="pageheader__divider" />
     </Container>
   );
 }

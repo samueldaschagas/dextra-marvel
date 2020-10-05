@@ -1,86 +1,66 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Catálogo Marvel Comics
 
-### Directory Layout
+- Aplicativo que exibe um catálago de quadrinhos e lista personagens da Marvel Comics.
+- Projeto utiliza a API da Marvel para realizar as requisições.
+- Criado a partir do [Create React App](https://github.com/facebook/create-react-app).
 
-```shell
-.
-├── /components/                # Shared or generic UI components
-│   ├── /Button/                # Button component
-│   ├── /Layout/                # Website layout component
-│   ├── /Link  /                # Link component to be used insted of <a>
-│   └── /...                    # etc.
-├── /node_modules/              # 3rd-party libraries and utilities
-├── /pages/                     # React components for web pages
-│   ├── /about/                 # About page
-│   ├── /error/                 # Error page
-│   ├── /home/                  # Home page
-│   └── /...                    # etc.
-├── /public/                    # Static files such as favicon.ico etc.
-│   ├── /dist/                  # The folder for compiled output
-│   ├── favicon.ico             # Application icon to be displayed in bookmarks
-│   ├── robots.txt              # Instructions for search engine crawlers
-│   └── /...                    # etc.
-├── /test/                      # Unit and integration tests
-├── /utils/                     # Utility and helper classes
-│── main.js                     # React application entry point
-│── package.json                # The list of project dependencies and NPM scripts
-│── routes.json                 # This list of application routes
-│── run.js                      # Build automation script, e.g. `node run build`
-└── webpack.config.js           # Bundling and optimization settings for Webpack
-```
-
-
-### Getting Started
-
-Just clone the repo, install Node.js modules and run `npm start`:
+### Estrutura de pastas
 
 ```shell
-$ git clone -o react-static-boilerplate -b master --single-branch \
-      https://github.com/kriasoft/react-static-boilerplate.git MyApp
-$ cd MyApp
-$ npm install                   # Install project dependencies listed in package.json
-$ node run                      # Build and launch the app, same as `npm start`
+├── /node_modules/              # Bibliotecas de terceiros e utilitários
+├── /public/                    # Arquivos estáticos, como favicon.ico etc.
+│   ├── favicon.ico             # Ícone do aplicativo a ser exibido nos favoritos e na aba do navegador
+│   ├── index.html              # Estrutura de html principal do aplicativo
+│   ├── robots.txt              # Instruções para rastreadores de mecanismos de pesquisa
+├── /src/                       # Concentra arquivos/componentes utilizados para desenvolvimento
+│   ├── /components/            # Componentes de IU compartilhados ou utilizados em layout (Exs.: Footer ou Header)
+│   ├── /images/                # Imagens disponíveis para uso em todo o app
+│   ├── /pages/                 # Componentes responsáveis pela montagem das páginas de listagem e individuais
+│   ├── api.ts                  # Concentra chamadas a Api
+│   ├── App.tsx                 # Componente que exibe layout principal e que define mapeamentos das rotas
+│   ├── constants.ts            # Centraliza constantes que podem ser usadas por todo o aplicativo
+│   ├── index.scss              # Arquivo de estilo da index gerado pelo Create React App
+│   ├── index.tsx               # Renderiza App em div com id 'root' e configura ToastProvider
+│   └── ...                     # Demais arquivos gerados pelo Create React App
+├── .gitignore                  # Define diretórios/arquivos que não serão considerados pelo git
+├── .prettierrc                 # Arquivo de configuração do formatador prettier
+├── app.yaml                    # Arquivo utilizado para subir aplicação na nuvem
+├── package.json                # A lista de dependências do projeto e scripts NPM
+├── README.md                   # Documentação do projeto
+└── tsconfig.json               # Arquivo de configuração do typescript
 ```
 
-## Available Scripts
+### Iniciando
 
-In the project directory, you can run:
+1. Clone o repositório e instale as dependências (`yarn` ou `npm install`)
 
-### `yarn start`
+```shell
+$ git clone git@github.com:samueldaschagas/dextra-marvel.git
+$ cd dextra-marvel
+$ yarn                    # Instala as dependências listadas no package.json
+```
+2. Crie um arquivo `.env.local` na raiz do projeto (`/src`), com o seguinte conteúdo:
+```shell
+REACT_APP_BASE_URL=https://gateway.marvel.com/v1/public/
+REACT_APP_PUBLIC_KEY=${Sua public key aqui}
+REACT_APP_PRIVATE_KEY=${Sua private key aqui}
+```
+As chaves necessárias (pública e privada) para ter acesso a API da Marvel são disponibilizadas por meio de registro na plataforma da Marvel. Link: https://developer.marvel.com
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+3. No diretório do projeto, você pode executar `yarn start` ou `npm start` para iniciar projeto. O comando executa o aplicativo no modo de desenvolvimento.
+Abra http://localhost:3000 para visualizar no navegador.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+A página será recarregada se você fizer edições.
+Você também verá quaisquer erros de lint no console.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Compilando aplicativo para produção
 
-### `yarn build`
+Executa o comando `yarn build`. O aplicativo é então compilado para produção na pasta `build`.<br />
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Ele agrupa corretamente o React no modo de produção e otimiza a construção para o melhor desempenho.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+A compilação é reduzida e os nomes dos arquivos incluem os hashes.<br />
+Seu aplicativo está pronto para ser implantado!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Consulte a seção sobre [implantação Create React App](https://facebook.github.io/create-react-app/docs/deployment) para obter mais informações.
