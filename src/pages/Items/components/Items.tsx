@@ -42,31 +42,23 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
   const [searchText, setSearchText] = useState('');
   const [offSet, setOffSet] = useState(0);
   const [isShowOnlyFavorites, setIsShowOnlyFavorites] = useState(false);
+  const [selectedFilterLetter, setSelectedFilterLetter] = useState('');
 
-  useEffect(() => {
-    setOffSet(0);
-    setSelectedPage(0);
-    setFavorites(
-      JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]')
-    );
-    setIsShowOnlyFavorites(false);
-    clearSearchInput();
-    setSelectedFilterLetter('');
-    fetchItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemType]);
-
-  async function fetchItems(searchText?: string) {
+  async function fetchItems(searchText?: string, selectedOffSet?: number) {
     setLoadingItems(true);
     try {
       const timestamp = Number(new Date());
       const hash = md5.create();
       hash.update(timestamp + PRIVATE_KEY! + PUBLIC_KEY!);
 
-      const comicsUrl = `comics?ts=${timestamp}&orderBy=title&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
+      const comicsUrl = `comics?ts=${timestamp}&orderBy=title&offset=${
+        selectedOffSet || offSet
+      }&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
         searchText ? `&titleStartsWith=${searchText}` : ''
       );
-      const charactersUrl = `characters?ts=${timestamp}&orderBy=name&offset=${offSet}&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
+      const charactersUrl = `characters?ts=${timestamp}&orderBy=name&offset=${
+        selectedOffSet || offSet
+      }&apikey=${PUBLIC_KEY}&hash=${hash.hex()}`.concat(
         searchText ? `&nameStartsWith=${searchText}` : ''
       );
 
@@ -90,20 +82,57 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     }
   }
 
-  // Recarrega itens quando página é alterada, considerando filtro por letra ou texto buscado
+  function resetPagination() {
+    setSelectedPage(0);
+    setOffSet(0);
+  }
+
+  // Limpa campo de busca
+  function clearSearchInput() {
+    const searchInputText = document.getElementById(
+      'searchText'
+    ) as HTMLInputElement;
+
+    if (searchInputText) {
+      searchInputText.value = '';
+    }
+    setSearchText('');
+  }
+
+  // O useEffect será acionado quando alternar entre as rotas /comics e /characters
   useEffect(() => {
-    fetchItems(selectedFilterLetter || searchText);
+    // Reinicia states
+    resetPagination();
+    clearSearchInput();
+    setIsShowOnlyFavorites(false);
+    setSelectedFilterLetter('');
+
+    // Inicia 'favorites' com os itens favoritos que estão no localStorage, de acordo com a chave selecionada
+    setFavorites(
+      JSON.parse(window.localStorage.getItem(LOCAL_STORAGE_KEY) || '[]')
+    );
+
+    fetchItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offSet]);
+  }, [itemType]);
+
+  // Recarrega itens quando página é alterada, considerando filtro por letra ou texto buscado
+  // useEffect(() => {
+  //   fetchItems(selectedFilterLetter || searchText);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [offSet]);
 
   // Ao clicar em botões da paginação, atualiza state com a página selecionada e offset
   function handlePageClick({ selected }: { selected: number }) {
     window.scrollTo(0, 0);
 
+    console.log('Changeees');
+
     const selectedOffSet = Math.ceil(selected * MAX_ITEMS_PER_PAGE);
 
     setSelectedPage(selected);
-    setOffSet(selectedOffSet);
+    // setOffSet(selectedOffSet);
+    fetchItems(selectedFilterLetter || searchText, selectedOffSet);
   }
 
   /* 
@@ -123,16 +152,20 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     setSearchText(e.target.value);
   }
 
+  function handleSearchCloseIconClick() {
+    clearSearchInput();
+    resetPagination();
+    fetchItems();
+  }
+
   function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     /**
-     * Utiliza preventDefault para evitar o recarregamento da página
-     * ao apertar a tecla Enter para submeter formulário
+     * Chama função preventDefault para evitar o recarregamento da página
+     * ao teclar Enter para submeter formulário
      * */
     e.preventDefault();
 
-    // Reinicia states offSet, selectedPage, selectedFilterLetter e isShowOnlyFavorites
-    setOffSet(0);
-    setSelectedPage(0);
+    resetPagination();
     setSelectedFilterLetter('');
     setIsShowOnlyFavorites(false);
 
@@ -145,35 +178,18 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     history.push(`/${itemType}/${id}`);
   }
 
-  // Limpa campo de busca
-  function clearSearchInput() {
-    const searchInputText = document.getElementById(
-      'searchText'
-    ) as HTMLInputElement;
-
-    if (searchInputText) {
-      searchInputText.value = '';
-    }
-    setSearchText('');
-  }
-
   // Limpa filtro por letra
   function clearFilterLetter() {
-    setOffSet(0);
-    setSelectedPage(0);
+    resetPagination();
     setSelectedFilterLetter('');
     fetchItems();
   }
-
-  const [selectedFilterLetter, setSelectedFilterLetter] = useState('');
 
   function handleFilterLetterChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const letter = e.target.value;
 
     if (letter !== selectedFilterLetter) {
-      // Reinicia states offSet, selectedPage e isShowOnlyFavorites; e limpa campo de busca
-      setOffSet(0);
-      setSelectedPage(0);
+      resetPagination();
       setIsShowOnlyFavorites(false);
       clearSearchInput();
 
@@ -182,6 +198,39 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
       fetchItems(letter);
     }
   }
+
+  function handleShowFavoritesClick() {
+    // Atualiza state isShowOnlyFavorites para renderizar ou não os favoritos
+    setIsShowOnlyFavorites(!isShowOnlyFavorites);
+
+    clearSearchInput();
+    setSelectedFilterLetter('');
+
+    if (isShowOnlyFavorites) {
+      resetPagination();
+      fetchItems();
+    }
+  }
+
+  function handleClearFavoritesClick() {
+    if (
+      window.confirm(
+        `Do you really want to remove all ${
+          isComics ? 'comics' : 'characters'
+        } marked as "Favorite"? This operation cannot be undone.`
+      )
+    ) {
+      setFavorites([]);
+      setShowTooltips(false);
+      setIsShowOnlyFavorites(false);
+      resetPagination();
+
+      addToast('Favorites have been removed', {
+        appearance: 'success',
+      });
+    }
+  }
+
   const screenClass = useScreenClass();
   const isMobile = ['xs', 'sm', 'md'].includes(screenClass);
   const [showTooltips, setShowTooltips] = useState(true);
@@ -191,6 +240,19 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
       setShowTooltips(true);
     }
   }, [showTooltips]);
+
+  function renderResultsFound() {
+    return !total || (isShowOnlyFavorites && _.isEmpty(favorites)) ? (
+      <div className="items__filter-first-letter__results">
+        No {isShowOnlyFavorites ? 'favorites' : 'results'} found.
+      </div>
+    ) : (
+      <div className="items__filter-first-letter__results">
+        <strong>{isShowOnlyFavorites ? favorites.length : total}</strong>{' '}
+        {isShowOnlyFavorites ? 'favorites' : 'results'} found
+      </div>
+    );
+  }
 
   // Renderiza itens favoritados ou itens encontrados após resultado da consulta
   function renderItems() {
@@ -267,11 +329,7 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
                     ? 'items__close-icon--is-mobile'
                     : 'items__close-icon'
                 }
-                onClick={() => {
-                  clearSearchInput();
-                  fetchItems();
-                  setOffSet(0);
-                }}
+                onClick={handleSearchCloseIconClick}
               />
             ) : (
               <AiOutlineSearch
@@ -289,18 +347,7 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
           <div className="items__more-actions">
             <Row>
               <Col>
-                <button
-                  className="btn"
-                  onClick={() => {
-                    setIsShowOnlyFavorites(!isShowOnlyFavorites);
-                    clearSearchInput();
-                    setSelectedFilterLetter('');
-
-                    if (isShowOnlyFavorites) {
-                      fetchItems();
-                    }
-                  }}
-                >
+                <button className="btn" onClick={handleShowFavoritesClick}>
                   {isShowOnlyFavorites
                     ? 'Show All'
                     : `Show Only Favorites (${favorites.length})`}
@@ -309,24 +356,7 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
               <Col>
                 <button
                   className="btn"
-                  onClick={() => {
-                    if (
-                      window.confirm(
-                        `Do you really want to remove all ${
-                          isComics ? 'comics' : 'characters'
-                        } marked as "Favorite"? This operation cannot be undone.`
-                      )
-                    ) {
-                      setFavorites([]);
-                      setShowTooltips(false);
-                      setIsShowOnlyFavorites(false);
-                      addToast('Favorites have been removed', {
-                        appearance: 'success',
-                      });
-                      setSelectedPage(0);
-                      setOffSet(0);
-                    }
-                  }}
+                  onClick={handleClearFavoritesClick}
                   disabled={_.isEmpty(favorites)}
                 >
                   Clear Favorites
@@ -341,15 +371,8 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
             <div className="items__filter-first-letter__results">
               Loading...
             </div>
-          ) : !total || (isShowOnlyFavorites && _.isEmpty(favorites)) ? (
-            <div className="items__filter-first-letter__results">
-              No {isShowOnlyFavorites ? 'favorites' : 'results'} found.
-            </div>
           ) : (
-            <div className="items__filter-first-letter__results">
-              <strong>{isShowOnlyFavorites ? favorites.length : total}</strong>{' '}
-              {isShowOnlyFavorites ? 'favorites' : 'results'} found
-            </div>
+            renderResultsFound()
           )}
           <LetterFilter
             onChange={handleFilterLetterChange}

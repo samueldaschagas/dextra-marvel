@@ -15,9 +15,9 @@ function App() {
   return (
     <Router>
       <Header />
-      <Redirect exact from="/" to="/comics" />
       <main>
         <Switch>
+          <Redirect exact from="/" to="/comics" />
           <Route
             exact
             path="/comics"
