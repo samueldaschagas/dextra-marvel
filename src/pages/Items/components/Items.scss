@@ -1,3 +1,5 @@
+$primary-color: #ef4f21;
+
 .items {
   &__img-wrapper {
     overflow: hidden;
@@ -28,32 +30,10 @@
       padding: 0 48px 0 15px;
       border-radius: 4px;
     }
-
-    button {
-      height: 35px;
-      background-color: #ef4f21;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 0 18px;
-      transition: 0.3s;
-
-      &:hover {
-        -webkit-box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
-        -moz-box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
-        box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
   }
 
   &__search-form--is-mobile {
     @extend .items__search-form;
-
     margin-bottom: 20px;
     width: 100%;
 
@@ -78,77 +58,67 @@
     font-size: 20px;
     top: 4px;
     color: #bbb;
-  }
 
-  &__search-icon--is-mobile {
-    color: rgb(187, 187, 187);
-    position: absolute;
-    right: 35%;
-    font-size: 25px;
-    top: 10px;
+    &--is-mobile {
+      color: #bbbbbb;
+      position: absolute;
+      right: 35%;
+      font-size: 28px;
+      margin: 8px;
+    }
   }
 
   &__close-icon {
     @extend .items__search-icon;
-
     cursor: pointer;
+
+    &--is-mobile {
+      cursor: pointer;
+      color: #bbbbbb;
+      position: absolute;
+      right: 35%;
+      font-size: 28px;
+      margin: 8px;
+    }
   }
 }
 
-.btn {
-  height: 35px;
+.button {
   background-color: #fff;
-  color: #000;
+  padding: 9px 14px;
+  font-size: 15px;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 0 18px;
-  transition: 0.3s;
+  border-radius: 5px;
+  transition: 0.3s box-shadow;
 
   &:hover {
-    -webkit-box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
-    -moz-box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
-    box-shadow: 0px 0px 18px -6px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 0px 0px 6px -3px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 6px -3px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 6px -3px rgba(0, 0, 0, 0.75);
   }
 
   &:disabled {
-    background-color: #ddd;
+    border: none;
     opacity: 0.5;
     cursor: not-allowed;
+    background-color: #ddd;
+  }
+
+  &--primary-color {
+    color: #fff;
+    background-color: $primary-color;
+
+    &:disabled {
+      background-color: $primary-color;
+      border-color: $primary-color;
+    }
   }
 }
 
-@media (max-width: 578px) {
-  .items__actions-bar .btn {
-    margin-bottom: 10px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header__nav {
-    justify-content: space-between;
-    position: fixed;
-    width: 100%;
-    z-index: 1;
-  }
-
-  .header__nav__dextra-link {
-    display: none;
-  }
-
-  .header__nav ul {
-    margin-left: 0;
-  }
-
-  .header__nav li {
-    padding: 10px;
-  }
-
-  .header__img-banner {
-    margin-top: 68px;
-  }
-}
-
-.items__filter-first-letter {
+.items__letter-filter {
   margin-bottom: 25px;
   display: flex;
   justify-content: space-between;
@@ -156,9 +126,8 @@
 
   select {
     height: 35px;
-    width: 100px;
     border: 1px solid #ccc;
-    padding: 0 15px;
+    padding: 0 10px;
     border-radius: 4px;
     background-color: #fff;
     margin-left: 5px;
@@ -167,15 +136,10 @@
   .btn-clear {
     margin: -3px 0 0 15px;
   }
-}
 
-.items__selected-first-letter {
-  color: #ef4f21 !important;
-  font-weight: 900;
-}
-
-.items__filter-first-letter__results {
-  font-style: italic;
+  &__results {
+    font-style: italic;
+  }
 }
 
 @media (max-width: 992px) {
@@ -183,27 +147,33 @@
     display: block;
   }
 
-  .items__actions-bar .btn {
+  .items__more-actions .button {
     height: 45px;
     width: 100%;
   }
 }
 
 @media (min-width: 992px) {
-  .items__actions-bar .btn {
+  .items__actions-bar .button {
     margin-left: -10px;
   }
 }
 
 @media (max-width: 768px) {
-  .items__filter-first-letter {
+  .items__letter-filter {
     display: block;
     margin-bottom: 30px;
     text-align: center;
-  }
 
-  .items__filter-first-letter__results {
-    text-align: center;
-    margin: 30px 0;
+    &__results {
+      text-align: center;
+      margin: 30px 0;
+    }
+  }
+}
+
+@media (max-width: 578px) {
+  .items__actions-bar .button {
+    margin-bottom: 10px;
   }
 }

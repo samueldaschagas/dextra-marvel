@@ -116,17 +116,9 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemType]);
 
-  // Recarrega itens quando página é alterada, considerando filtro por letra ou texto buscado
-  // useEffect(() => {
-  //   fetchItems(selectedFilterLetter || searchText);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [offSet]);
-
   // Ao clicar em botões da paginação, atualiza state com a página selecionada e offset
   function handlePageClick({ selected }: { selected: number }) {
     window.scrollTo(0, 0);
-
-    console.log('Changeees');
 
     const selectedOffSet = Math.ceil(selected * MAX_ITEMS_PER_PAGE);
 
@@ -212,6 +204,7 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
     }
   }
 
+  // Função utilizada para remover todos os favoritos por contexto (/comics ou /characters)
   function handleClearFavoritesClick() {
     if (
       window.confirm(
@@ -242,16 +235,28 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
   }, [showTooltips]);
 
   function renderResultsFound() {
-    return !total || (isShowOnlyFavorites && _.isEmpty(favorites)) ? (
-      <div className="items__filter-first-letter__results">
-        No {isShowOnlyFavorites ? 'favorites' : 'results'} found.
-      </div>
-    ) : (
-      <div className="items__filter-first-letter__results">
-        <strong>{isShowOnlyFavorites ? favorites.length : total}</strong>{' '}
-        {isShowOnlyFavorites ? 'favorites' : 'results'} found
-      </div>
-    );
+    // Renderiza texto com resultado de acordo com total de itens ou total de favoritos
+    if (!isShowOnlyFavorites) {
+      if (total) {
+        return (
+          <>
+            <strong>{total}</strong> results found
+          </>
+        );
+      } else {
+        return 'No results found';
+      }
+    } else {
+      if (_.isEmpty(favorites)) {
+        return 'No favorites found';
+      } else {
+        return (
+          <>
+            <strong>{favorites.length}</strong> favorites found
+          </>
+        );
+      }
+    }
   }
 
   // Renderiza itens favoritados ou itens encontrados após resultado da consulta
@@ -340,14 +345,18 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
                 }
               />
             )}
-            <button type="submit" disabled={loadingItems || !searchText}>
+            <button
+              className="button button--primary-color"
+              type="submit"
+              disabled={loadingItems || !searchText}
+            >
               Search
             </button>
           </form>
           <div className="items__more-actions">
             <Row>
               <Col>
-                <button className="btn" onClick={handleShowFavoritesClick}>
+                <button className="button" onClick={handleShowFavoritesClick}>
                   {isShowOnlyFavorites
                     ? 'Show All'
                     : `Show Only Favorites (${favorites.length})`}
@@ -355,7 +364,7 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
               </Col>
               <Col>
                 <button
-                  className="btn"
+                  className="button"
                   onClick={handleClearFavoritesClick}
                   disabled={_.isEmpty(favorites)}
                 >
@@ -366,14 +375,10 @@ export function Items({ history, title, match: { path } }: TComicsProps) {
           </div>
         </div>
         <hr />
-        <div className="items__filter-first-letter">
-          {loadingItems ? (
-            <div className="items__filter-first-letter__results">
-              Loading...
-            </div>
-          ) : (
-            renderResultsFound()
-          )}
+        <div className="items__letter-filter">
+          <div className="items__letter-filter__results">
+            {loadingItems ? 'Loading...' : renderResultsFound()}
+          </div>
           <LetterFilter
             onChange={handleFilterLetterChange}
             onClearClick={clearFilterLetter}

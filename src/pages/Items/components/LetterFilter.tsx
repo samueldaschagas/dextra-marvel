@@ -32,7 +32,7 @@ export default function LetterFilter({
         ))}
       </select>
       <button
-        className="btn btn-clear"
+        className="button btn-clear"
         onClick={onClearClick}
         disabled={!selectedFilterLetter}
       >
