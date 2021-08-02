@@ -16,7 +16,7 @@
     "react-icons": "^3.11.0",
     "react-paginate": "^6.5.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "3.4.0",
     "react-simple-tooltip": "^2.6.1",
     "react-spinners": "^0.9.0",
     "react-toast-notifications": "^2.4.0",
@@ -41,7 +41,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "docker-compose -f docker-compose.dev.yml up"
   },
   "eslintConfig": {
     "extends": "react-app"

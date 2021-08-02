@@ -1,0 +1,19 @@
+FROM node:lts-alpine as builder
+
+# Define diretório padrão
+WORKDIR /app
+# Copia package.json do host para a raiz do container
+COPY package.json .
+
+# Instala dependências no host
+RUN npm install
+# Copia arquivos do diretório raiz do host para a raiz do container
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# 1. Buildar imagem: $ docker build -t dextra-marvel:nginx -f Dockerfile.prod .
+# 2. Rodar container: $ docker run -p 8081:80 dextra-marvel:nginx
